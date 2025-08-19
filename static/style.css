@@ -1,0 +1,138 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Lora", serif;
+}
+.whole-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Left-Pane-styling */
+.left {
+    width: 20%;
+    background-color: #181818;
+    padding: 20px;
+}
+.logo{
+    display: flex;
+}
+#logo{
+    width: 50px;
+}
+#logo-text{
+    margin-top: 10px;
+    margin-left: 10px;
+    color: rgb(145, 145, 145);
+}
+
+.chats{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+.chat{
+    padding: 20px;
+    background-color: #131313;
+    color: rgb(145, 145, 145);
+    margin-top: 10px;
+    border-radius: 20px;
+}
+
+/* Right Pane Styling */
+#welcome{
+    color: #707070
+}
+
+.right-before {
+    width: 80%;
+    background-color: #131313;
+    padding: 20px;
+}
+.question-asking-form{
+    width: 80%;
+    position: fixed;
+    bottom: 20px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+.question-asking-prompt{
+    padding: 20px;
+    border: 0.5px solid rgb(65, 65, 65);
+    width: 50%;
+    border-radius: 20px 0px 0px 20px;
+    background: rgb(46, 46, 46);
+    font-size: medium;
+    color: white;
+}
+.question-asking-prompt:focus{
+    outline: none;
+}
+.question-asking-prompt-button{
+    padding: 20px;
+    border: 0;
+    width: 10%;
+    background-color: #116dff;
+    color: white;
+    cursor: pointer;
+    border-radius: 0px 20px 20px 0px;
+    font-size: medium;
+}
+
+/* Services Block */
+.services{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.service{
+    width: 200px;
+    height: 200px;
+    background: #181818;
+    margin: 10px;
+    padding: 20px;
+    color: rgb(145, 145, 145);
+    border-radius: 20px;
+    margin-top: 6%;
+    transition: 0.5s;
+}
+.service:hover{
+    background: #116dff;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* Right Pane After Question is Asked */
+.right-after {
+    width: 80%;
+    background-color: #131313;
+    padding: 20px;
+}
+.question{
+    display: flex;
+    padding: 20px;
+    background: #202020;
+}
+.question p{
+    margin-top: 12px;
+    margin-left: 20px;
+    color: white;
+}
+.answer{
+    display: flex;
+    padding: 20px;
+    background: #3f3f3f;
+}
+.answer p{
+    margin-top: 12px;
+    margin-left: 40px;
+    color: white;
+    line-height: 2;
+}
+#answer-logo{
+    width: 50px;
+    position: fixed;
+}
