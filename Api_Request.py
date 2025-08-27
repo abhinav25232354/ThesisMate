@@ -1,23 +1,25 @@
 from openai import OpenAI
+import requests
 
 def askAI(userInput):
-    client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key="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",
-    )
-    user = userInput
-    completion = client.chat.completions.create(
-    extra_headers={
-        "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
-        "X-Title": "<YOUR_SITE_NAME>", # Optional. Site title for rankings on openrouter.ai.
-    },
-    extra_body={},
-    model="openai/gpt-oss-20b:free",
-    messages=[
-        {
-        "role": "user",
-        "content": user + "Don't add markdown syntax, just give me simple text response."
+        API_KEY = "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"
+        API_URL = "https://api.perplexity.ai/chat/completions"
+        HEADERS = {
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json"
         }
-    ]
-    )
-    return completion.choices[0].message.content
+        MODEL_NAME = "sonar"
+
+        payload = {
+            "model": MODEL_NAME,
+            "messages": [
+                {"role": "system", "content": "You are a helpful research assistant."},
+                {"role": "user", "content": userInput + "Don't add markdown syntax bold, italic, underline, bullets, etc."}
+            ],
+            "max_tokens": 700,
+            "temperature": 0.7,
+        }
+        response = requests.post(API_URL, headers=HEADERS, json=payload)
+        response.raise_for_status()
+        data = response.json()
+        return data["choices"][0]["message"]["content"]
