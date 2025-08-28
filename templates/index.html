@@ -8,7 +8,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Highlight.js for code blocks -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <title>Home - AI Researcher</title>
 </head>
 
@@ -17,66 +36,96 @@
         <div class="left">
             <!-- It Contains SideBar -->
             <div class="logo">
-                <img id="logo" src="/static/logo.png" alt="AI Researcher Logo">
-                <h2 id="logo-text">DexterityCoder</h2>
+                <img id="logo" src="/static/logo.png" alt="AI Researcher Logo" href="{{url_for('index')}}">
+                <h2 id="logo-text"><a style="text-decoration: none; color: white;"
+                        href="{{url_for('index')}}">DexterityCoder</a></h2>
             </div>
 
             <div class="chats">
-                <div class="chat" style="background: #116dff; color: white;"><p>Export PDF</p></div>
-                <div class="chat"><p>New Chat</p></div>
-                <div class="chat"><p>Hello, how are you</p></div>
-                <div class="chat"><p>Who build AI Researcher</p></div>
-                <div class="chat"><p>Who is Steve Jobs</p></div>
+                <div class="chat" style="background: transparent; color: white;">
+                    <p>Sources</p>
+                </div>
+                <div class="sources">
+                    {% if search_results %}
+                    {% for result in search_results %}
+                    <a class="source" href="{{ result.url }}" target="_blank"
+                        style="display:block;text-decoration:none;">
+                        <div style="display:flex;flex-direction:column;">
+                            <span style="font-weight:bold;color:#116dff;">{{ result.title }}</span>
+                            {% if result.date %}<span style="font-size:12px;color:#aaa;">{{ result.date }}</span>{%
+                            endif %}
+                            <span style="font-size:12px;color:#888;overflow-wrap:anywhere;">{{ result.url }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <span style="color:#888; margin-left: 20px;">No sources Yet.</span>
+                    {% endif %}
+                </div>
             </div>
         </div>
+
+        <div class="question-asking-whole-form">
+            <!-- <div class="service-toggles">
+                <button class="service-toggle-pdfUpload" id="pdf-upload">UploadPDF</button>
+                <button class="service-toggle-exportPDF" id="export-upload">ExportPDF</button>
+                <button class="service-toggle-Research" id="research">Research</button>
+            </div> -->
+            <form class="question-asking-form" action="/ask" method="post">
+                    <input class="question-asking-prompt" type="text" name="question"
+                        placeholder="Type your question here..." required>
+                    <button class="question-asking-prompt-button" type="submit" href="{{url_for('ask')}}">Ask</button>
+                </form>
+        </div>
+
         {% if not answer %}
         <div class="right-before">
-            <!-- It Contains User Question and AI Answer -->
-            <div id="welcome">
-                <h1>Welcome to AI Researcher</h1>
-                <p>Ask your questions about AI and get answers from our AI Researcher.</p>
+            <div class="right-content">
+                <!-- It Contains User Question and AI Answer -->
+                <div id="welcome">
+                    <h1>Research Buddy</h1>
+                    <p>Made By DexterityCoder</p>
+                </div>
+
+                <div class="services">
+                    <!-- It Contains Boxes of different services -->
+                    <div class="service">
+                        <h2>PDF Upload & Analysis </h2>
+                        <p>Extract text, metadata (title, pages, words, reading time).</p>
+                    </div>
+                    <div class="service">
+                        <h2>Research Gap Detection</h2>
+                        <p>Identify unexplored areas and potential future research</p>
+                    </div>
+                    <div class="service">
+                        <h2> Export to PDF</h2>
+                        <p>Generate professional reports</p>
+                    </div>
+                </div>
             </div>
-
-            <div class="services">
-                <!-- It Contains Boxes of different services -->
-                <div class="service">
-                    <h2>PDF Upload & Analysis </h2>
-                    <p>Extract text, metadata (title, pages, words, reading time).</p>
-                </div>
-                <div class="service">
-                    <h2>Research Gap Detection</h2>
-                    <p>Identify unexplored areas and potential future research</p>
-                </div>
-                <div class="service">
-                    <h2> Export to PDF</h2>
-                    <p>Generate professional reports with branding (“DexterityCoder”).</p>
-                </div>
-            </div>
-
-            <form class="question-asking-form" action="/ask" method="post">
-                <input class="question-asking-prompt" type="text" name="question" placeholder="Type your question here..."
-                    required>
-                <button class="question-asking-prompt-button" type="submit" href="{{url_for('ask')}}">Ask</button>
-            </form>
-
         </div>
         {% else %}
         <div class="right-after">
             <!-- It Contains User Question and AI Answer -->
+            <div class="right-content">
                 <div class="question">
                     <img id="logo" src="/static/logo.png" alt="Logo">
                     <p>{{question}}</p>
                 </div>
                 <div class="answer">
-                    <img id="answer-logo" src="/static/AI-logo.png" alt="Logo">
-                    <p>{{answer}}</p>
+                    <div class="answer-content">
+                        <!-- <img id="answer-logo" src="/static/AI-logo.png" alt="Logo"> -->
+                        <p>{{answer|safe}}</p>
+                        <h3 class="citation">Citations:</h3>
+                        <p class="citation-links">{{ citations|safe }}</p>
+                    </div>
                 </div>
-
-             <form class="question-asking-form" action="/ask" method="post">
+            </div>
+            <!-- <form class="question-asking-form" action="/ask" method="post">
                 <input class="question-asking-prompt" type="text" name="question" placeholder="Type your question here..."
                     required>
                 <button class="question-asking-prompt-button" type="submit">Ask</button>
-            </form>
+            </form> -->
         </div>
         {% endif %}
     </div>

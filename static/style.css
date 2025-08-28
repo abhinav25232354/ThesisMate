@@ -1,7 +1,50 @@
+/* Color Variables */
+/* :root {
+    --color-bg-main: #181818;
+    --color-bg-secondary: #131313;
+    --color-bg-accent: #202020;
+    --color-bg-service: #181818;
+    --color-bg-answer: #3f3f3f;
+    --color-bg-hover: #116cff11;
+    --color-bg-scrollbar: #232323;
+    --color-bg-scrollbar-hover: #444;
+    --color-primary: #116dff;
+    --color-primary-light: #116cff;
+    --color-text-main: #fff;
+    --color-text-secondary: #707070;
+    --color-text-muted: #888;
+    --color-text-light: #aaa;
+    --color-text-logo: #919191;
+    --color-service-border: #414141;
+} */
+:root {
+    --color-bg-main: #0d1117;         /* Deep dark background */
+    --color-bg-secondary: #161b22;    /* Slightly lighter panels */
+    --color-bg-accent: #1c2333;       /* Blue-tinted accent background */
+    --color-bg-service: #0d1117;      /* Match main for consistency */
+    --color-bg-answer: #212936;       /* Answer box with subtle blue-gray */
+    --color-bg-hover: #1f6feb22;      /* Soft blue hover effect */
+    --color-bg-scrollbar: #1e1e2e;    /* Scrollbar dark gray-blue */
+    --color-bg-scrollbar-hover: #2b2b3c;
+
+    --color-primary: #1f6feb;         /* Vibrant modern blue */
+    --color-primary-light: #3b82f6;   /* Brighter hover blue */
+    --color-primary-glow: #60a5fa;    /* Glow effect for buttons/links */
+
+    --color-text-main: #f5f5f7;       /* Crisp white text */
+    --color-text-secondary: #9ca3af;  /* Neutral secondary text */
+    --color-text-muted: #6b7280;      /* Muted gray text */
+    --color-text-light: #d1d5db;      /* Lighter text */
+    --color-text-logo: #3b82f6;       /* Blue logo text for branding */
+
+    --color-service-border: #2d3748;  /* Border with subtle contrast */
+}
+
 *{
     margin: 0;
     padding: 0;
     font-family: "Lora", serif;
+    /* font-family: 'Inter', sans-serif; */
 }
 .whole-container {
     display: flex;
@@ -10,9 +53,39 @@
 
 /* Left-Pane-styling */
 .left {
-    width: 20%;
-    background-color: #181818;
+    width: 25%;
+    min-width: 320px;
+    background-color: var(--color-bg-main);
     padding: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+/* Minimal custom scrollbar for left pane and all scrollable areas */
+/* Minimal custom scrollbar for left pane and all scrollable areas */
+.left::-webkit-scrollbar,
+.right-content::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 7px;
+    background: transparent;
+}
+.left::-webkit-scrollbar-thumb,
+.right-content::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: var(--color-bg-scrollbar);
+    border-radius: 6px;
+}
+.left::-webkit-scrollbar-thumb:hover,
+.right-content::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-bg-scrollbar-hover);
+}
+/* For Firefox */
+.left,
+.right-content,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-bg-scrollbar) transparent;
 }
 .logo{
     display: flex;
@@ -23,7 +96,7 @@
 #logo-text{
     margin-top: 10px;
     margin-left: 10px;
-    color: rgb(145, 145, 145);
+    color: var(--color-text-logo);
 }
 
 .chats{
@@ -33,38 +106,67 @@
 }
 .chat{
     padding: 20px;
-    background-color: #131313;
-    color: rgb(145, 145, 145);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-logo);
     margin-top: 10px;
     border-radius: 20px;
 }
 
-/* Right Pane Styling */
-#welcome{
-    color: #707070
+.sources{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+.source{
+    padding: 20px;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-logo);
+    margin-top: 10px;
+    border-radius: 20px;
+    text-align: left;
 }
 
-.right-before {
-    width: 80%;
-    background-color: #131313;
-    padding: 20px;
+
+/* Right Pane Styling */
+#welcome{
+    color: var(--color-text-secondary);
 }
-.question-asking-form{
+
+.right-before, .right-after {
+    width: 80%;
+    background-color: var(--color-bg-secondary);
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
+    padding: 0;
+    position: relative;
+}
+.right-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 20px;
+    padding-bottom: 120px; /* Space for the fixed form */
+}
+.question-asking-form {
     width: 80%;
     position: fixed;
+    left: 20%;
     bottom: 20px;
-    margin: auto;
     display: flex;
     justify-content: center;
+    /* background: var(--color-bg-secondary); */
+    z-index: 10;
+    padding-bottom: 0;
 }
 .question-asking-prompt{
     padding: 20px;
-    border: 0.5px solid rgb(65, 65, 65);
+    border: 0.5px solid var(--color-service-border);
     width: 50%;
     border-radius: 20px 0px 0px 20px;
-    background: rgb(46, 46, 46);
+    background: var(--color-bg-secondary);
+    /* backdrop-filter: blur(10px); */
     font-size: medium;
-    color: white;
+    color: var(--color-text-main);
 }
 .question-asking-prompt:focus{
     outline: none;
@@ -73,8 +175,8 @@
     padding: 20px;
     border: 0;
     width: 10%;
-    background-color: #116dff;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-text-main);
     cursor: pointer;
     border-radius: 0px 20px 20px 0px;
     font-size: medium;
@@ -90,49 +192,144 @@
 .service{
     width: 200px;
     height: 200px;
-    background: #181818;
+    background: transparent;
     margin: 10px;
     padding: 20px;
-    color: rgb(145, 145, 145);
+    color: var(--color-text-light);
     border-radius: 20px;
     margin-top: 6%;
     transition: 0.5s;
+    border: 0.5px solid var(--color-service-border);
 }
 .service:hover{
-    background: #116dff;
-    color: white;
+    background: var(--color-bg-hover);
+    color: var(--color-primary);
     cursor: pointer;
+    border: 0.5px solid var(--color-primary);
 }
 
 
 /* Right Pane After Question is Asked */
 .right-after {
     width: 80%;
-    background-color: #131313;
+    background-color: var(--color-bg-secondary);
     padding: 20px;
 }
 .question{
     display: flex;
     padding: 20px;
-    background: #202020;
+    background: var(--color-bg-accent);
+    border-radius: 20px 20px 0px 0px ;
 }
 .question p{
     margin-top: 12px;
     margin-left: 20px;
-    color: white;
+    color: var(--color-text-main);
 }
 .answer{
     display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align icon and text at the top */
     padding: 20px;
-    background: #3f3f3f;
+    background: var(--color-bg-answer);
+    border-radius: 0px 0px 20px 20px;
 }
 .answer p{
-    margin-top: 12px;
-    margin-left: 40px;
-    color: white;
+    margin-top: 20px;
+    margin-left: 20px;
+    color: var(--color-text-main);
     line-height: 2;
+    word-break: break-word;
 }
-#answer-logo{
+
+.citation {
+    margin-top: 20px;
+    margin-left: 20px;
+    color: var(--color-text-main);
+}
+ul{
+    list-style: none;
+    margin-left: 20px;
+    margin-top: 10px;
+}
+/* .citation-links {
+    margin-top: 10px;
+    margin-left: 20px;
+    color: #116dff; */
+/* } */
+ul li a {
+    color: var(--color-primary);
+    text-decoration: none;
+    margin-top: 5px;
+
+    /* --- Fix long URL wrapping --- */
+    display: inline-block;      /* allow block behavior inside flex/inline */
+    max-width: 100%;            /* never overflow container */
+    white-space: normal;        /* allow wrapping */
+    word-wrap: break-word;      /* legacy support */
+    word-break: break-word;     /* break long words if needed */
+    overflow-wrap: anywhere;    /* modern browsers */
+}
+
+#answer-logo {
     width: 50px;
-    position: fixed;
+    /* Remove position: fixed; */
+    margin-top: 0;
+    margin-left: 0;
+}
+
+@media (max-width: 900px) {
+    .question-asking-form {
+        width: 100%;
+        left: 0;
+    }
+    .right-before, .right-after {
+        width: 100%;
+    }
+}
+
+/* Services toggles */
+ /* <div class="service-toggles">
+                <button class="service-toggle-pdfUpload" id="pdf-upload">UploadPDF</button>
+                <button class="service-toggle-exportPDF" id="pdf-upload">ExportPDF</button>
+            </div> */
+
+.service-toggles {
+        display: flex;
+        position: absolute;
+        bottom: 90px;
+        left: 35%;
+        z-index: 9;
+}
+.service-toggle-pdfUpload{
+    border: 0.5px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    padding: 10px;
+    margin: 5px;
+    border-radius: 20px;
+}
+.service-toggle-exportPDF{
+    border: 0.5px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    padding: 10px;
+    margin: 5px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+} 
+.service-toggle-Research{
+    border: 0.5px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    padding: 10px;
+    margin: 5px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+.service-toggle-Research.active {
+    background: var(--color-primary);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-primary);
+    backdrop-filter: blur(10px);
 }

@@ -1,0 +1,26 @@
+Paper 1:
+  PaperID : 44e1dd74f0446ec91221189ad3a65edb1a0208fe
+  URL     : https://www.semanticscholar.org/paper/44e1dd74f0446ec91221189ad3a65edb1a0208fe
+  Title   : A guide to deep learning in healthcare
+  Year    : 2019
+  Status  : Available
+  Authors : A. Esteva, Alexandre Robicquet, Bharath Ramsundar, Volodymyr Kuleshov, M. DePristo, Katherine Chou, Claire Cui, Greg S. Corrado, S. Thrun, J. Dean
+  Abstract: N/A
+------------------------------------------------------------
+Paper 2:
+  PaperID : 9b90291103892b9f9665c11461d7bc9ea40ea9ec
+  URL     : https://www.semanticscholar.org/paper/9b90291103892b9f9665c11461d7bc9ea40ea9ec
+  Title   : MONAI: An open-source framework for deep learning in healthcare
+  Year    : 2022
+  Status  : Available
+  Authors : M. Cardoso, Wenqi Li, Richard Brown, Nic Ma, E. Kerfoot, Yiheng Wang, Benjamin Murrey, A. Myronenko, Can Zhao, Dong Yang, V. Nath, Yufan He, Ziyue Xu, Ali Hatamizadeh, Wenjie Zhu, Yun Liu, Mingxin Zheng, Yucheng Tang, Isaac Yang, Michael Zephyr, Behrooz Hashemian, Sachidanand Alle, Mohammad Zalbagi Darestani, C. Budd, M. Modat, Tom Kamiel Magda Vercauteren, Guotai Wang, Yiwen Li, Yipeng Hu, Yunguan Fu, Benjamin L. Gorman, Hans J. Johnson, Brad W. Genereaux, B. S. Erdal, Vikash Gupta, A. Diaz-Pinto, Andre Dourson, L. Maier-Hein, P. Jaeger, M. Baumgartner, Jayashree Kalpathy-Cramer, Mona G. Flores, J. Kirby, L. Cooper, H. Roth, Daguang Xu, David Bericat, R. Floca, S. K. Zhou, Haris Shuaib, K. Farahani, K. Maier-Hein, S. Aylward, Prerna Dogra, S. Ourselin, Andrew Feng
+  Abstract: Artificial Intelligence (AI) is having a tremendous impact across most areas of science. Applications of AI in healthcare have the potential to improve our ability to detect, diagnose, prognose, and intervene on human disease. For AI models to be used clinically, they need to be made safe, reproducible and robust, and the underlying software framework must be aware of the particularities (e.g. geometry, physiology, physics) of medical data being processed. This work introduces MONAI, a freely available, community-supported, and consortium-led PyTorch-based framework for deep learning in healthcare. MONAI extends PyTorch to support medical data, with a particular focus on imaging, and provide purpose-specific AI model architectures, transformations and utilities that streamline the development and deployment of medical AI models. MONAI follows best practices for software-development, providing an easy-to-use, robust, well-documented, and well-tested software framework. MONAI preserves the simple, additive, and compositional approach of its underlying PyTorch libraries. MONAI is being used by and receiving contributions from research, clinical and industrial teams from around the world, who are pursuing applications spanning nearly every aspect of healthcare.
+------------------------------------------------------------
+Paper 3:
+  PaperID : 916325c49aafb6891f404250781530ca8ab043b6
+  URL     : https://www.semanticscholar.org/paper/916325c49aafb6891f404250781530ca8ab043b6
+  Title   : A Review on Bayesian Deep Learning in Healthcare: Applications and Challenges
+  Year    : 2022
+  Status  : Available
+  Authors : Abdullah A. Abdullah, M. M. Hassan, Yaseen T. Mustafa
+  Abstract: In the last decade, Deep Learning (DL) has revolutionized the use of artificial intelligence, and it has been deployed in different fields of healthcare applications such as image processing, natural language processing, and signal processing. DL models have also been intensely used in different tasks of healthcare such as disease diagnostics and treatments. Deep learning techniques have surpassed other machine learning algorithms and proved to be the ultimate tools for many state-of-the-art applications. Despite all that success, classical deep learning has limitations and their models tend to be very confident about their predicted decisions because it does not know when it makes mistake. For the healthcare field, this limitation can have a negative impact on models predictions since almost all decisions regarding patients and diseases are sensitive. Therefore, Bayesian deep learning (BDL) has been developed to overcome these limitations. Unlike classical DL, BDL uses probability distributions for the model parameters, which makes it possible to estimate the whole uncertainties associated with the predicted outputs. In this regard, BDL offers a rigorous framework to quantify all sources of uncertainties in the model. This study reviews popular techniques of using Bayesian deep learning with their benefits and limitations. It also reviewed recent deep learning architecture such as Convolutional Neural Networks and Recurrent Neural Networks. In particular, the applications of Bayesian deep learning in healthcare have been discussed such as its use in medical imaging tasks, clinical signal processing, medical natural language processing, and electronic health records. Furthermore, this paper has covered the deployment of Bayesian deep learning for some of the widespread diseases. This paper has also discussed the fundamental research challenges and highlighted some research gaps in both the Bayesian deep learning and healthcare perspective.
