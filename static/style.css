@@ -175,11 +175,16 @@ body {
     padding: 20px;
     border: 0;
     width: 10%;
-    background-color: var(--color-primary);
+    background-color: var(--color-service-border);
     color: var(--color-text-main);
     cursor: pointer;
     border-radius: 0px 20px 20px 0px;
     font-size: medium;
+    transition: 0.5s;
+}
+.question-asking-prompt-button:hover{
+    color: var(--color-primary);
+    transition: 0.5s;
 }
 
 /* Services Block */

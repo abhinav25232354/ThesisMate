@@ -9,12 +9,14 @@ def askAI(userInput):
         "Content-Type": "application/json"
     }
     MODEL_NAME = "sonar"
+    # MODEL_NAME = "sonar-deep-research"
 
     payload = {
         "model": MODEL_NAME,
         "messages": [
             {"role": "system", "content": "You are a helpful research assistant. Always respond with very long and detailed answers."},
             {"role": "user", "content": userInput + "Don't add markdown syntax bold, italic, underline, bullets, citations and reference markers etc."}
+            # {"role": "user", "content": userInput}
         ],
         "max_tokens": 700,
         "temperature": 0.7,

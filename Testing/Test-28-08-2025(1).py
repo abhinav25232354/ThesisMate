@@ -7,7 +7,7 @@ def askAI(userInput):
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
-    MODEL_NAME = "sonar"
+    MODEL_NAME = "sonar-deep-research"
 
     payload = {
         "model": MODEL_NAME,
@@ -22,29 +22,30 @@ def askAI(userInput):
     response = requests.post(API_URL, headers=HEADERS, json=payload)
     response.raise_for_status()
     data = response.json()
+    print(data)
 
-    # Extracting needed fields
-    answer = data["choices"][0]["message"]["content"]
-    citations = data.get("citations", [])
-    search_results = data.get("search_results", [])
+    # # Extracting needed fields
+    # answer = data["choices"][0]["message"]["content"]
+    # citations = data.get("citations", [])
+    # search_results = data.get("search_results", [])
 
-    # Prepare response in structured form
-    result = {
-        "answer": answer,
-        "citations": citations,
-        "search_results": []
-    }
+    # # Prepare response in structured form
+    # result = {
+    #     "answer": answer,
+    #     "citations": citations,
+    #     "search_results": []
+    # }
 
-    # Add detailed search results
-    for res in search_results:
-        result["search_results"].append({
-            "title": res.get("title"),
-            "url": res.get("url"),
-            "date": res.get("date"),
-            "last_updated": res.get("last_updated")
-        })
+    # # Add detailed search results
+    # for res in search_results:
+    #     result["search_results"].append({
+    #         "title": res.get("title"),
+    #         "url": res.get("url"),
+    #         "date": res.get("date"),
+    #         "last_updated": res.get("last_updated")
+    #     })
 
-    return result
+    # return result
 
 
 # Example usage:
@@ -52,15 +53,15 @@ if __name__ == "__main__":
     query = input("Enter your question: ")
     output = askAI(query)
 
-    print("\n=== AI Answer ===\n", output["answer"])
-    print("\n=== Citations ===")
-    for c in output["citations"]:
-        print("-", c)
+    # print("\n=== AI Answer ===\n", output["answer"])
+    # print("\n=== Citations ===")
+    # for c in output["citations"]:
+    #     print("-", c)
 
-    print("\n=== Search Results ===")
-    for s in output["search_results"]:
-        print(f"Title: {s['title']}")
-        print(f"URL: {s['url']}")
-        print(f"Date: {s['date']}")
-        print(f"Last Updated: {s['last_updated']}")
-        print()
+    # print("\n=== Search Results ===")
+    # for s in output["search_results"]:
+    #     print(f"Title: {s['title']}")
+    #     print(f"URL: {s['url']}")
+    #     print(f"Date: {s['date']}")
+    #     print(f"Last Updated: {s['last_updated']}")
+    #     print()

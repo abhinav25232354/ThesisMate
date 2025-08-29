@@ -28,6 +28,7 @@
     <script>hljs.highlightAll();</script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=data_exploration" />
     <title>Home - AI Researcher</title>
 </head>
 
@@ -74,7 +75,9 @@
             <form class="question-asking-form" action="/ask" method="post">
                     <input class="question-asking-prompt" type="text" name="question"
                         placeholder="Type your question here..." required>
-                    <button class="question-asking-prompt-button" type="submit" href="{{url_for('ask')}}">Ask</button>
+                    <button class="question-asking-prompt-button" type="submit" href="{{url_for('ask')}}"><span class="material-symbols-outlined">
+data_exploration
+</span></button>
                 </form>
         </div>
 
@@ -110,12 +113,12 @@
             <div class="right-content">
                 <div class="question">
                     <img id="logo" src="/static/logo.png" alt="Logo">
-                    <p>{{question}}</p>
+                    <p id="question-para">{{question}}</p>
                 </div>
                 <div class="answer">
                     <div class="answer-content">
                         <!-- <img id="answer-logo" src="/static/AI-logo.png" alt="Logo"> -->
-                        <p>{{answer|safe}}</p>
+                        <p id="answer-para">{{answer|safe}}</p>
                         <h3 class="citation">Citations:</h3>
                         <p class="citation-links">{{ citations|safe }}</p>
                     </div>

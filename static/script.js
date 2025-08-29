@@ -9,6 +9,3 @@ button.addEventListener('click', function() {
 
 // Get the raw markdown passed from Flask
 const rawMarkdown = `{{ answer | safe }}`;
-
-// Convert it into HTML using marked.js
-document.querySelector(".answer").innerHTML = marked.parse(rawMarkdown);
