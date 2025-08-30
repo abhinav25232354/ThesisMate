@@ -1,31 +1,37 @@
-from flask import Flask, request, render_template_string
-import fitz   # PyMuPDF
-import io
+import requests
+import json
 
-app = Flask(__name__)
+def analyze_pdf(pdf_url, question):
+    """Analyze a PDF with a specific question"""
+    url = "https://api.perplexity.ai/chat/completions"
+    headers = {"Authorization": "Bearer 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"}
+    
+    payload = {
+        "messages": [{
+            "content": [
+                {"type": "text", "text": question},
+                {"type": "file_url", "file_url": {"url": pdf_url}}
+            ],
+            "role": "user"
+        }],
+        "model": "sonar-pro"
+    }
+    
+    response = requests.post(url, headers=headers, json=payload)
+    return response.json()
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_pdf():
-    extracted_text = ""
-    if request.method == 'POST':
-        file = request.files.get('file')
-        if file:
-            file_bytes = file.read()
-            # Open PDF directly from bytes, no saving
-            pdf_doc = fitz.open(stream=file_bytes, filetype="pdf")
-            extracted_text = ""
-            for page in pdf_doc:
-                extracted_text += page.get_text()
-            # extracted_text variable now contains all PDF text
+# Usage
+result = analyze_pdf(
+    "https://www.semanticscholar.org/reader/9c9d7247f8c51ec5a02b0d911d1d7b9e8160495d",
+    "What are the main recommendations?"
+)
 
-    # Simple upload form for demonstration
-    return render_template_string("""
-        <form method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".pdf">
-            <input type="submit" value="Upload PDF">
-        </form>
-        <pre>{{text}}</pre>
-    """, text=extracted_text)
+# Extract variables:
+citations = result.get("citations", [])
+search_results = result.get("search_results", [])
+content = result.get("choices", [])[0].get("message", {}).get("content", "")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Example usage:
+print("Citations:", citations)
+print("Search Results:", search_results)
+print("Content:", content)

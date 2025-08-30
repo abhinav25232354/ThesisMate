@@ -206,12 +206,30 @@ body {
     transition: 0.5s;
     border: 0.5px solid var(--color-service-border);
 }
-.service:hover{
+.on{
     background: var(--color-bg-hover);
     color: var(--color-primary);
     cursor: pointer;
     border: 0.5px solid var(--color-primary);
 }
+.off{
+    width: 200px;
+    height: 200px;
+    background: transparent;
+    margin: 10px;
+    padding: 20px;
+    color: var(--color-text-light);
+    border-radius: 20px;
+    margin-top: 6%;
+    transition: 0.5s;
+    border: 0.5px solid var(--color-service-border);
+}
+/* .service:hover{
+    background: var(--color-bg-hover);
+    color: var(--color-primary);
+    cursor: pointer;
+    border: 0.5px solid var(--color-primary);
+} */
 
 
 /* Right Pane After Question is Asked */
@@ -239,7 +257,7 @@ body {
     background: var(--color-bg-answer);
     border-radius: 0px 0px 20px 20px;
 }
-.answer p{
+.answer #answer-para{
     margin-top: 20px;
     margin-left: 20px;
     color: var(--color-text-main);
@@ -302,17 +320,18 @@ ul li a {
 .service-toggles {
         display: flex;
         position: absolute;
-        bottom: 90px;
-        left: 35%;
+        bottom: 80px;
+        left: 20%;
         z-index: 9;
 }
 .service-toggle-pdfUpload{
-    border: 0.5px solid var(--color-primary);
+    border: 0.5px solid var(--color-bg-accent);
     background: transparent;
-    color: var(--color-primary);
+    color: var(--color-text-muted);
     padding: 10px;
     margin: 5px;
-    border-radius: 20px;
+    border-radius: 12px;
+    /* display: none; */
 }
 .service-toggle-exportPDF{
     border: 0.5px solid var(--color-primary);
@@ -337,4 +356,42 @@ ul li a {
     color: var(--color-text-main);
     border: 1px solid var(--color-primary);
     backdrop-filter: blur(10px);
+}
+
+
+
+
+input[type="file"]::file-selector-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-bg-service);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  input[type="file"]::file-selector-button:hover {
+    background: var(--color-bg-accent);
+  }
+
+
+
+/* About Page Styling */
+.about {
+    color: var(--color-text-main);
+    padding: 20px;
+    line-height: 1.6;
+    background: var(--color-bg-secondary);
+    position: absolute; /* or fixed */
+    top: 15%;
+    left: 25%;
+    width: 70%;          /* define width */
+    height: 75%;         /* define height */
+    z-index: 1;
+    overflow-y: auto;    /* scroll if content overflows */
+    border-radius: 20px;
+    display: none;
+
+    opacity: 0;
 }

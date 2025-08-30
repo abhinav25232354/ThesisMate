@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from Api_Request import askAI
 import markdown
+import os
 
 app = Flask(__name__)
 
@@ -25,24 +26,60 @@ def index():
     return render_template('index.html')
 
 @app.route('/ask', methods=['GET', 'POST'])
+
 def ask():
     if request.method == 'POST':
-        user_input = request.form.get('question', '')
-        if user_input.strip() == '':
+        user_input = request.form.get('question', '').strip()
+        url_input = request.form.get('url', '').strip()   # 👈 for handling URL input
+        uploaded_file = request.files.get('fileInput')   # 👈 safe get (no crash if missing)
+
+        file_path = None
+        if uploaded_file and uploaded_file.filename != '':
+            os.makedirs("uploads", exist_ok=True)
+            file_path = os.path.join("uploads", uploaded_file.filename)
+            uploaded_file.save(file_path)
+            print(f"Uploaded File: {file_path}")
+
+        # if nothing is provided, just reload the page
+        if not user_input and not file_path and not url_input:
             return render_template('index.html')
+
         try:
-            answer = askAI(user_input)
+            # Pass only the arguments that exist
+            answer = askAI(
+                userInput=user_input if user_input else None,
+                file=file_path if file_path else None,
+                url=url_input if url_input else None
+            )
+
             citations = citation_function(answer[0])
             content = answer[1]
             search_results = search_results_function(answer[2])
-            print(f"User: {user_input}, Answer: {answer}")
-            return render_template('index.html', answer=content, question=user_input, citations=citations, search_results=search_results)
+
+            print(f"User: {user_input}, File: {file_path}, URL: {url_input}, Answer: {answer}")
+
+            return render_template(
+                'index.html',
+                answer=content,
+                question=user_input,
+                citations=citations,
+                search_results=search_results
+            )
+
         except Exception as e:
-            return render_template('index.html', answer=f"Error: {str(e)}", question=user_input)
-            # return render_template('index.html', answer=f"Error Occured - Please Try After Stable Version Release", question=user_input)
+            return render_template(
+                'index.html',
+                answer=f"Error: {str(e)}",
+                question=user_input
+            )
+
+    # GET request
     else:
-        # For GET requests, just show the default page
         return render_template('index.html')
+    
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
