@@ -62,11 +62,13 @@ def ask():
                 "citations": citations,
                 "search_results": search_results
             })
-            print(chats)
+            with open("chat_history.txt", "a") as f:
+                for chat in chats:  # assuming chats is a list
+                    f.write(str(chat) + "\n")  # convert each chat to string and add a newline
 
             return render_template(
                 'index.html',
-                chats=chats
+                chats=chats[-1]
             )
 
         except Exception as e:
@@ -84,6 +86,10 @@ def ask():
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')
+
+@app.route('/history', methods=['GET'])
+def history():
+    return render_template('index.html', chats=chats)
 
 if __name__ == '__main__':
     app.run(debug=True)

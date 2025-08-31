@@ -142,6 +142,9 @@ def askAI(userInput=None, file=None, url=None):
     #     "max_tokens": 700,
     #     "temperature": 0.7,
     # }
+    with open("chat_history.txt", "r") as f:
+        context = f.read()
+
     payload = {
     "model": MODEL_NAME,
     "messages": [
@@ -151,7 +154,7 @@ def askAI(userInput=None, file=None, url=None):
                 "You are an intelligent assistant. "
                 "If the user asks casual greetings or small talk, reply naturally and concisely. "
                 "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
-                # "Don't Add markdown, citations, and formatting symbols."
+                f"{context}"
     )
         },
         {"role": "user", "content": userInput}
