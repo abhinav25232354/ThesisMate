@@ -25,8 +25,9 @@ def search_results_function(search_results):
 def index():
     return render_template('index.html')
 
-@app.route('/ask', methods=['GET', 'POST'])
 
+chats = []
+@app.route('/ask', methods=['GET', 'POST'])
 def ask():
     if request.method == 'POST':
         user_input = request.form.get('question', '').strip()
@@ -42,7 +43,7 @@ def ask():
 
         # if nothing is provided, just reload the page
         if not user_input and not file_path and not url_input:
-            return render_template('index.html')
+            return render_template('index.html', chats=chats)
 
         try:
             # Pass only the arguments that exist
@@ -55,27 +56,30 @@ def ask():
             citations = citation_function(answer[0])
             content = answer[1]
             search_results = search_results_function(answer[2])
-
-            print(f"User: {user_input}, File: {file_path}, URL: {url_input}, Answer: {answer}")
+            chats.append({
+                "question": user_input,
+                "answer": content,
+                "citations": citations,
+                "search_results": search_results
+            })
+            print(chats)
 
             return render_template(
                 'index.html',
-                answer=content,
-                question=user_input,
-                citations=citations,
-                search_results=search_results
+                chats=chats
             )
 
         except Exception as e:
             return render_template(
                 'index.html',
                 answer=f"Error: {str(e)}",
-                question=user_input
+                question=user_input,
+                chats=chats
             )
 
     # GET request
     else:
-        return render_template('index.html')
+        return render_template('index.html', chats=chats)
     
 @app.route('/about', methods=['GET'])
 def about():

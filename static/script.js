@@ -33,6 +33,34 @@ function togglePDFUpload() {
             // uploadButton.style.display = "none";
         }
 }
+function togglegap() {
+    const pdfToggle = document.getElementById('gap-toggle');
+    const inputField = document.querySelector(".question-asking-prompt");
+        if (!pdfToggle.classList.contains('on')) {
+            pdfToggle.classList.add('on');
+            inputField.placeholder = "Enter a Research Topic to Find Gaps...";
+            // uploadButton.style.display = "block";
+
+        } else {
+            pdfToggle.classList.remove('on');
+            inputField.placeholder = "Type your question here...";
+            // uploadButton.style.display = "none";
+        }
+}
+function toggleurl() {
+    const pdfToggle = document.getElementById('url-toggle');
+    const inputField = document.querySelector(".question-asking-prompt");
+        if (!pdfToggle.classList.contains('on')) {
+            pdfToggle.classList.add('on');
+            inputField.placeholder = "Enter a URL With Query...";
+            // uploadButton.style.display = "block";
+
+        } else {
+            pdfToggle.classList.remove('on');
+            inputField.placeholder = "Type your question here...";
+            // uploadButton.style.display = "none";
+        }
+}
 
 // const answerDiv = document.getElementById("answer-para");
 // // Assuming `responseText` is your API's markdown output
