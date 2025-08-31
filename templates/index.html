@@ -9,8 +9,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="shortcut icon" href="/static/logo.ico" type="image/x-icon">
 
     <!-- Highlight.js for code blocks -->
     <script>
@@ -29,7 +38,7 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=data_exploration" />
-    <title>Home - AI Researcher</title>
+    <title>ResearcherBuddy - By DexterityCoder</title>
 </head>
 
 <body>
@@ -48,18 +57,19 @@
                 </div>
                 <div class="sources">
                     {% if chats and chats|length > 0 and chats[-1].search_results %}
-                        {% for result in chats[-1].search_results %}
-                        <a class="source" href="{{ result.url }}" target="_blank"
-                            style="display:block;text-decoration:none;">
-                            <div style="display:flex;flex-direction:column;">
-                                <span style="font-weight:bold;color:#116dff;">{{ result.title }}</span>
-                                {% if result.date %}<span style="font-size:12px;color:#aaa;">{{ result.date }}</span>{% endif %}
-                                <span style="font-size:12px;color:#888;overflow-wrap:anywhere;">{{ result.url }}</span>
-                            </div>
-                        </a>
-                        {% endfor %}
+                    {% for result in chats[-1].search_results %}
+                    <a class="source" href="{{ result.url }}" target="_blank"
+                        style="display:block;text-decoration:none;">
+                        <div style="display:flex;flex-direction:column;">
+                            <span style="font-weight:bold;color:#116dff;">{{ result.title }}</span>
+                            {% if result.date %}<span style="font-size:12px;color:#aaa;">{{ result.date }}</span>{%
+                            endif %}
+                            <span style="font-size:12px;color:#888;overflow-wrap:anywhere;">{{ result.url }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
                     {% else %}
-                        <span style="color:#888; margin-left: 20px;">No sources Yet.</span>
+                    <span style="color:#888; margin-left: 20px;">No sources Yet.</span>
                     {% endif %}
                 </div>
             </div>
@@ -93,7 +103,14 @@
                     <div class="answer-content">
                         <div id="answer-para">{{ chat.answer|safe }}</div>
                         <h3 class="citation">Citations:</h3>
+                        {% if chat.citations %}
                         <p class="citation-links">{{ chat.citations|safe }}</p>
+                        {% else %}
+                        <p class="citation-links" style="padding-left: 20px; color: white; padding-top: 10px;">
+                            No citations available.
+                        </p>
+                        {% endif %}
+                        <button id="chat-history-button"><a style="text-decoration: none;" href="{{ url_for('history') }}">Show Chat History</a></button>
                     </div>
                 </div>
                 {% endfor %}
@@ -105,7 +122,8 @@
                 <!-- It Contains User Question and AI Answer -->
                 <div id="welcome">
                     <h1>Research Buddy</h1>
-                    <p>Made By <a onclick="toggleAbout()" style="color: #116dff; cursor: pointer;">DexterityCoder</a></p>
+                    <p>Made By <a onclick="toggleAbout()" style="color: #116dff; cursor: pointer;">DexterityCoder</a>
+                    </p>
                 </div>
                 <div class="services">
                     <!-- It Contains Boxes of different services -->
@@ -119,7 +137,8 @@
                     </div>
                     <div class="service" id="url-toggle" onclick="toggleurl()">
                         <h2>URL Research</h2>
-                        <p>Put a URL with a search query in the input field but only constraint is to send valid links not previews.</p>
+                        <p>Put a URL with a search query in the input field but only constraint is to send valid links
+                            not previews.</p>
                     </div>
                 </div>
             </div>
