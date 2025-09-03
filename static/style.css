@@ -274,6 +274,13 @@ body {
     line-height: 2;
     word-break: break-word;
 }
+.answer #answer-para2{
+    margin-top: 20px;
+    margin-left: 20px;
+    color: var(--color-text-main);
+    line-height: 2;
+    word-break: break-word;
+}
 
 .citation {
     margin-top: 20px;

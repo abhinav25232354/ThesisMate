@@ -146,22 +146,46 @@ def askAI(userInput=None, file=None, url=None):
         context = f.read()
 
     payload = {
-    "model": MODEL_NAME,
-    "messages": [
+        "model": MODEL_NAME,
+        "messages": [
         {
-            "role": "system",
-            "content": (
-                "You are an intelligent assistant. "
-                "If the user asks casual greetings or small talk, reply naturally and concisely. "
-                "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
-                f"{context}"
-    )
+        "role": "system",
+        "content": (
+            "You are an intelligent assistant. "
+            "If the user asks casual greetings or small talk, reply naturally and concisely. "
+            "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
+            f"{context}"
+        )
         },
-        {"role": "user", "content": userInput}
+        {
+        "role": "user",
+        "content": userInput
+        }
     ],
     "temperature": 0.7,
-    "max_output_tokens": 700   # Perplexity uses 'max_output_tokens' instead of 'max_tokens'
-}
+    "max_tokens": 700,                # OpenAI-compatible parameter (maps from your max_output_tokens)
+    "top_p": 1.0,                     # Optional: nucleus sampling (default if not specified)
+    "frequency_penalty": 0.0,         # Optional
+    "presence_penalty": 0.0,          # Optional
+    "stream": False,                  # Optional: set to true for streaming responses
+    # Perplexity-specific parameters:
+    "search_mode": "web",             # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
+    "search_domain_filter": [],       # e.g., ["wikipedia.org"] or ["-reddit.com"] :contentReference[oaicite:1]{index=1}
+    "search_recency_filter": None,    # e.g., "day", "week", "month", "year" :contentReference[oaicite:2]{index=2}
+    "search_after_date_filter": None, # e.g., "3/1/2025" (MM/DD/YYYY format) :contentReference[oaicite:3]{index=3}
+    "search_before_date_filter": None,# same format :contentReference[oaicite:4]{index=4}
+    "last_updated_after_filter": None,
+    "last_updated_before_filter": None,# if you want “last modified” filtering :contentReference[oaicite:5]{index=5}
+    "return_images": False,           # Include image URLs if true :contentReference[oaicite:6]{index=6}
+    "image_domain_filter": [],        # Requires return_images = true; e.g. ["-gettyimages.com"] :contentReference[oaicite:7]{index=7}
+    "image_format_filter": [],        # e.g. ["png", "gif"] :contentReference[oaicite:8]{index=8}
+    "return_related_questions": False,# Optional: include related questions :contentReference[oaicite:9]{index=9}
+    "web_search_options": {           # Optional per advanced control (especially academic mode)
+      "search_context_size": "low"    # or "high" :contentReference[oaicite:10]{index=10}
+    },
+    "response_format": None           # Structured output specifier (JSON Schema or Regex) :contentReference[oaicite:11]{index=11}
+    }
+
 
 
     response = requests.post(API_URL, headers=HEADERS, json=payload)
@@ -180,6 +204,7 @@ def askAI(userInput=None, file=None, url=None):
 
 
 if __name__ == "__main__":
-    question = "Explain this PDF in detail."
-    file = "C:/Users/Infort/Downloads/Synopsis of Project.pdf"
-    print(askAI(question, file))
+    question = input("Enter your question: ")
+    # file = "C:/Users/Infort/Downloads/Synopsis of Project.pdf"
+    # print(askAI(question, file))
+    print(askAI(question))

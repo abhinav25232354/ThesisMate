@@ -102,6 +102,7 @@
                 <div class="answer">
                     <div class="answer-content">
                         <div id="answer-para">{{ chat.answer|safe }}</div>
+                        <!-- <div id="answer-para2">{{ answer|safe }}</div> -->
                         <h3 class="citation">Citations:</h3>
                         {% if chat.citations %}
                         <p class="citation-links">{{ chat.citations|safe }}</p>
@@ -110,7 +111,11 @@
                             No citations available.
                         </p>
                         {% endif %}
-                        <button id="chat-history-button"><a style="text-decoration: none;" href="{{ url_for('history') }}">Show Chat History</a></button>
+                        <button id="chat-history-button"><a style="text-decoration: none;"
+                                href="{{ url_for('history') }}">Show Chat History</a></button>
+                        <br>
+                        <button id="chat-history-button"><a style="text-decoration: none;"
+                                href="{{ url_for('analyzeGap') }}">Analyze Gaps (Only for Research)</a></button>
                     </div>
                 </div>
                 {% endfor %}

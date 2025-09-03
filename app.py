@@ -91,5 +91,39 @@ def about():
 def history():
     return render_template('index.html', chats=chats)
 
+
+
+@app.route("/analyzeGap", methods=["GET", "POST"])
+def analyzeGap():
+    try:
+        # Get last chat context from history
+        with open("chat_history.txt", "r") as f:
+            last_line = [line for line in f if line.strip()][-1].strip()
+        context = last_line
+
+        # Run gap analysis prompt
+        Gaps = askAI("Identify research gaps based on the above context." + context)
+        citations = citation_function(Gaps[0])
+        content = Gaps[1]
+        search_results = search_results_function(Gaps[2])
+        chat_entry = {
+            "question": "Potential Gaps in research based on the above context.",
+            "answer": content,
+            "citations": citations,
+            "search_results": search_results
+        }
+        chats.append(chat_entry)
+        with open("chat_history.txt", "a") as f:
+            f.write(str(chat_entry) + "\n")
+
+        return render_template(
+            'index.html',
+            chats=chats[-1:]
+        )
+    except Exception as e:
+        return render_template('index.html', answer=f"Error: {str(e)}")
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+    # analyzeGap()
