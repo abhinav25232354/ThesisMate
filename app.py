@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from Api_Request import askAI
 import markdown
 import os
+import re
 
 app = Flask(__name__)
 
@@ -20,6 +21,33 @@ def search_results_function(search_results):
         })
     return results
 
+def checkExistingEntry(question):
+    def normalize_question(q):
+        # Lowercase, strip, remove trailing punctuation (., ?, !)
+        return re.sub(r'[.?!]+$', '', q.strip().lower())
+
+    if not question:
+        return "No entry Matched"
+
+    try:
+        if os.path.exists("chat_history.txt"):
+            question_norm = normalize_question(question)
+            with open("chat_history.txt", "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        chat_obj = eval(line.strip())
+                    except Exception:
+                        continue
+                    if isinstance(chat_obj, dict):
+                        q = chat_obj.get("question", "")
+                        if normalize_question(q) == question_norm:
+                            return chat_obj
+    except Exception:
+        pass
+
+    return "No entry Matched"
 
 @app.route('/')
 def index():
@@ -34,6 +62,8 @@ def ask():
         url_input = request.form.get('url', '').strip()   # 👈 for handling URL input
         uploaded_file = request.files.get('fileInput')   # 👈 safe get (no crash if missing)
 
+        all_chats = []  # ✅ Always initialize here
+
         file_path = None
         if uploaded_file and uploaded_file.filename != '':
             os.makedirs("uploads", exist_ok=True)
@@ -43,34 +73,24 @@ def ask():
 
         # if nothing is provided, just reload the page
         if not user_input and not file_path and not url_input:
-            return render_template('index.html', chats=chats)
-
-        # Check chat_history.txt for existing question
-        import re
-        def normalize_question(q):
-            # Lowercase, strip, remove trailing punctuation (., ?, !)
-            return re.sub(r'[.?!]+$', '', q.strip().lower())
-
-        found_chat = None
-        try:
+            all_chats = []
             if os.path.exists("chat_history.txt"):
-                user_input_norm = normalize_question(user_input)
                 with open("chat_history.txt", "r", encoding="utf-8") as f:
                     for line in f:
                         if not line.strip():
                             continue
                         try:
                             chat_obj = eval(line.strip())
+                            if isinstance(chat_obj, dict):
+                                all_chats.append(chat_obj)
                         except Exception:
                             continue
-                        q = chat_obj.get("question", "") if isinstance(chat_obj, dict) else ""
-                        if normalize_question(q) == user_input_norm:
-                            found_chat = chat_obj
-                            break
-        except Exception as e:
-            pass
+            return render_template('index.html', chats=all_chats)
 
-        if found_chat:
+        # ✅ Use checkExistingEntry instead of inline checking
+        found_chat = checkExistingEntry(user_input)
+
+        if found_chat != "No entry Matched":
             # Only show the found chat, do not append or save duplicate
             return render_template('index.html', chats=[found_chat])
 
@@ -91,26 +111,36 @@ def ask():
                 "citations": citations,
                 "search_results": search_results
             }
-            chats.append(chat_entry)
+            all_chats.append(chat_entry)
             with open("chat_history.txt", "a", encoding="utf-8") as f:
                 f.write(str(chat_entry) + "\n")
 
-            return render_template(
-                'index.html',
-                chats=[chat_entry]
-            )
+            return render_template('index.html', chats=all_chats)
 
         except Exception as e:
             return render_template(
                 'index.html',
                 answer=f"Error: {str(e)}",
                 question=user_input,
-                chats=chats
+                chats=all_chats
             )
 
     # GET request
     else:
-        return render_template('index.html', chats=chats)
+        all_chats = []
+        if os.path.exists("chat_history.txt"):
+            with open("chat_history.txt", "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        chat_obj = eval(line.strip())
+                        if isinstance(chat_obj, dict):
+                            all_chats.append(chat_obj)
+                    except Exception:
+                        continue
+        return render_template('index.html', chats=all_chats)
+
     
 
 @app.route('/regenerate', methods=['POST'])
