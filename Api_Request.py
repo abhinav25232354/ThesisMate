@@ -21,6 +21,7 @@ def polished_markdown_to_html(text):
 
     # Escape HTML first
     text = html.escape(text)
+    # text = html_lines.append(f"<p>{html.escape(' '.join(paragraph_lines))}</p>")
 
     # Inline formatting
     text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)  # code

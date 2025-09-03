@@ -1,0 +1,7 @@
+Step-1: Go to - https://www.python.org/downloads/release/python-3110/
+Step-2: Slide Down to the bottom and Install "Windows installer (64-bit)"
+Step-3: At the Time of installation, check Add pip to path & Install for All Users.
+Step-4: Open Admin PowerShell And Paste this - "pip install -r requirements.txt"
+Step-5: Run app.py from the directory And Open web browser
+step-6: Paste This to the browser - "http://127.0.0.1:5000/"
+Step-7: Enjoy AI Researcher

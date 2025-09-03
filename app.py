@@ -194,7 +194,6 @@ def history():
     return render_template('index.html', chats=chats)
 
 
-
 @app.route("/analyzeGap", methods=["GET", "POST"])
 def analyzeGap():
     try:

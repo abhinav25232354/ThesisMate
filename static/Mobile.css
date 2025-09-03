@@ -1,0 +1,22 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.left{
+    display: none;
+}
+.right-before{
+    width: 100%;
+}
+.services{
+    flex-direction: column;
+    justify-content: center;
+}
+.service{
+    width: 90%;
+    height: 20%;
+}
+.question-asking-prompt{
+    width: 80%;
+    justify-content: center;
+}
