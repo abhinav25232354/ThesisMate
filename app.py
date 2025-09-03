@@ -45,8 +45,37 @@ def ask():
         if not user_input and not file_path and not url_input:
             return render_template('index.html', chats=chats)
 
+        # Check chat_history.txt for existing question
+        import re
+        def normalize_question(q):
+            # Lowercase, strip, remove trailing punctuation (., ?, !)
+            return re.sub(r'[.?!]+$', '', q.strip().lower())
+
+        found_chat = None
         try:
-            # Pass only the arguments that exist
+            if os.path.exists("chat_history.txt"):
+                user_input_norm = normalize_question(user_input)
+                with open("chat_history.txt", "r", encoding="utf-8") as f:
+                    for line in f:
+                        if not line.strip():
+                            continue
+                        try:
+                            chat_obj = eval(line.strip())
+                        except Exception:
+                            continue
+                        q = chat_obj.get("question", "") if isinstance(chat_obj, dict) else ""
+                        if normalize_question(q) == user_input_norm:
+                            found_chat = chat_obj
+                            break
+        except Exception as e:
+            pass
+
+        if found_chat:
+            # Only show the found chat, do not append or save duplicate
+            return render_template('index.html', chats=[found_chat])
+
+        # Not found, do a new API request
+        try:
             answer = askAI(
                 userInput=user_input if user_input else None,
                 file=file_path if file_path else None,
@@ -56,19 +85,19 @@ def ask():
             citations = citation_function(answer[0])
             content = answer[1]
             search_results = search_results_function(answer[2])
-            chats.append({
+            chat_entry = {
                 "question": user_input,
                 "answer": content,
                 "citations": citations,
                 "search_results": search_results
-            })
-            with open("chat_history.txt", "a") as f:
-                for chat in chats:  # assuming chats is a list
-                    f.write(str(chat) + "\n")  # convert each chat to string and add a newline
+            }
+            chats.append(chat_entry)
+            with open("chat_history.txt", "a", encoding="utf-8") as f:
+                f.write(str(chat_entry) + "\n")
 
             return render_template(
                 'index.html',
-                chats=chats[-1]
+                chats=[chat_entry]
             )
 
         except Exception as e:
@@ -83,6 +112,49 @@ def ask():
     else:
         return render_template('index.html', chats=chats)
     
+
+@app.route('/regenerate', methods=['POST'])
+def regenerate():
+    try:
+        question = request.form.get('question', '').strip()
+        # Find the chat entry for this question
+        chat_context = None
+        if os.path.exists("chat_history.txt"):
+            with open("chat_history.txt", "r", encoding="utf-8") as f:
+                for line in f:
+                    if not line.strip():
+                        continue
+                    try:
+                        chat_obj = eval(line.strip())
+                    except Exception:
+                        continue
+                    if isinstance(chat_obj, dict) and chat_obj.get("question", "").strip().lower() == question.lower():
+                        chat_context = chat_obj
+                        break
+        # If found, use its context (the answer and possibly previous context)
+        if chat_context:
+            context_str = chat_context["answer"]
+        else:
+            context_str = ""
+        # Regenerate using askAI with the context
+        prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context_str}\nQuestion: {question}"
+        answer = askAI(prompt)
+        citations = citation_function(answer[0])
+        content = answer[1]
+        search_results = search_results_function(answer[2])
+        chat_entry = {
+            "question": question + " (Regenerated)",
+            "answer": content,
+            "citations": citations,
+            "search_results": search_results
+        }
+        chats.append(chat_entry)
+        with open("chat_history.txt", "a", encoding="utf-8") as f:
+            f.write(str(chat_entry) + "\n")
+        return render_template('index.html', chats=chats[-1:])
+    except Exception as e:
+        return render_template('index.html', answer=f"Error: {str(e)}")
+
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html')

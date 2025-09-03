@@ -111,11 +111,20 @@
                             No citations available.
                         </p>
                         {% endif %}
-                        <button id="chat-history-button"><a style="text-decoration: none;"
-                                href="{{ url_for('history') }}">Show Chat History</a></button>
-                        <br>
-                        <button id="chat-history-button"><a style="text-decoration: none;"
-                                href="{{ url_for('analyzeGap') }}">Analyze Gaps (Only for Research)</a></button>
+
+                        <div class="afterChatButtons" style="display: flex;">
+                            <button id="chat-history-button"><a style="text-decoration: none;"
+                                    href="{{ url_for('history') }}">Show Chat History</a></button>
+                            <br>
+                            <button id="chat-history-button"><a style="text-decoration: none;"
+                                    href="{{ url_for('analyzeGap') }}">Analyze Gaps (Only for Research)</a></button>
+                            <br>
+                            <form method="post" action="/regenerate" style="display:inline;">
+                                <input type="hidden" name="question" value="{{ chat.question }}">
+                                <button id="chat-history-button" type="submit"
+                                    style="cursor: pointer;">Regenerate</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
