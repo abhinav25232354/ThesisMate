@@ -155,6 +155,13 @@ def askAI(userInput=None, file=None, url=None):
             "You are an intelligent assistant. "
             "If the user asks casual greetings or small talk, reply naturally and concisely. "
             "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
+            "If a file is attached with the question, use its content to inform your response."
+            "If the attached file is a research paper, thesis, or article, summarize its key points and findings in your answer."
+            "If the user input contains multiple questions, answer each one thoroughly."
+            "If the attached file is research then classify the research type (e.g., empirical study, literature review, theoretical paper) and summarize its main contributions accordingly. "
+            "Support your response with **10–20 citations**, ensuring diversity of sources "
+            "(academic papers, books, reputable articles). "
+            "Do not summarize too briefly—expand fully."
             f"{context}"
         )
         },
@@ -164,13 +171,13 @@ def askAI(userInput=None, file=None, url=None):
         }
     ],
     "temperature": 0.7,
-    "max_tokens": 700,                # OpenAI-compatible parameter (maps from your max_output_tokens)
+    "max_tokens": 3000,                # OpenAI-compatible parameter (maps from your max_output_tokens)
     "top_p": 1.0,                     # Optional: nucleus sampling (default if not specified)
     "frequency_penalty": 0.0,         # Optional
     "presence_penalty": 0.0,          # Optional
     "stream": False,                  # Optional: set to true for streaming responses
     # Perplexity-specific parameters:
-    "search_mode": "web",             # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
+    "search_mode": "academic",             # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
     "search_domain_filter": [],       # e.g., ["wikipedia.org"] or ["-reddit.com"] :contentReference[oaicite:1]{index=1}
     "search_recency_filter": None,    # e.g., "day", "week", "month", "year" :contentReference[oaicite:2]{index=2}
     "search_after_date_filter": None, # e.g., "3/1/2025" (MM/DD/YYYY format) :contentReference[oaicite:3]{index=3}
@@ -182,7 +189,7 @@ def askAI(userInput=None, file=None, url=None):
     "image_format_filter": [],        # e.g. ["png", "gif"] :contentReference[oaicite:8]{index=8}
     "return_related_questions": False,# Optional: include related questions :contentReference[oaicite:9]{index=9}
     "web_search_options": {           # Optional per advanced control (especially academic mode)
-      "search_context_size": "low"    # or "high" :contentReference[oaicite:10]{index=10}
+      "search_context_size": "high"    # or "high" :contentReference[oaicite:10]{index=10}
     },
     "response_format": None           # Structured output specifier (JSON Schema or Regex) :contentReference[oaicite:11]{index=11}
     }

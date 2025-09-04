@@ -120,11 +120,13 @@ body {
     margin-top: 10px;
     border-radius: 12px;
 }
-
+#source-title{
+    color: var(--color-text-secondary);
+}
 .sources{
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 .source{
     padding: 20px;
@@ -133,12 +135,14 @@ body {
     margin-top: 10px;
     border-radius: 12px;
     text-align: left;
+    border: 0.5px solid var(--color-service-border);
 }
 
 
 /* Right Pane Styling */
 #welcome{
     color: var(--color-text-secondary);
+    padding: 20px;
 }
 
 .right-before, .right-after {
@@ -153,7 +157,7 @@ body {
 .right-content {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 20px;
+    padding: 0px;
     padding-bottom: 150px; /* Space for the fixed form */
 }
 .question-asking-form {
