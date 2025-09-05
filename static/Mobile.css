@@ -1,22 +1,51 @@
-*{
+* {
     margin: 0;
     padding: 0;
 }
-.left{
+
+.left {
     display: none;
 }
-.right-before{
+
+.right-before {
     width: 100%;
 }
-.services{
+
+.services {
     flex-direction: column;
     justify-content: center;
 }
-.service{
+
+.service {
     width: 90%;
     height: 20%;
 }
-.question-asking-prompt{
+
+.question-asking-prompt {
     width: 80%;
     justify-content: center;
+}
+
+#whole-content-on-the-page {
+    display: none;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    /* horizontal */
+    align-items: center;
+    /* vertical */
+    height: 100vh;
+    /* full viewport height */
+    background: #191a1a;
+}
+
+.mobile {
+    display: block;
+    text-align: center;
+    width: auto;
+    height: auto;
+    padding: 20px;
+    color: rgb(49 184 198);
 }

@@ -1,3 +1,6 @@
+.mobile{
+    display: none;
+}
 /* Color Variables */
 /* :root {
     --color-bg-main: #181818;
@@ -19,8 +22,8 @@
 } */
 :root {
     /* ==== Backgrounds ==== */
-    --color-bg-main: #0f0f0f;         /* Deep dark base—unchanged for signature feel */
-    --color-bg-secondary: #161616;    /* Panels—keep subtle sophistication */
+    --color-bg-main: #1f2121;         /* Deep dark base—unchanged for signature feel */
+    --color-bg-secondary: #191a1a;    /* Panels—keep subtle sophistication */
     --color-bg-accent: #333333;       /* Accent panels—still blue-tinted deep charcoal */
     --color-bg-service: #202020;      /* Matches main for cohesion */
     --color-bg-answer: #242424;       /* Slightly bluish gray for answer blocks */
@@ -29,7 +32,7 @@
     --color-bg-scrollbar-hover: #3f3f3f; /* Higher contrast on hover */
 
     /* ==== Primary Accent Color ==== */
-    --color-primary: #116dff;         /* AI-Teal brand blue */
+    --color-primary: rgb(49 184 198);         /* AI-Teal brand blue */
     --color-primary-light: #3a99a5;   /* Lighter AI-Teal hover tone */
     --color-primary-glow: #60b3bc;    /* Soft, modern glow for interactive elements */
 
@@ -41,7 +44,7 @@
     --color-text-logo: #21808D;       /* AI-Teal for subtle branding touches */
 
     /* ==== Borders ==== */
-    --color-service-border: #2d3748;  /* Low-contrast, refined border */
+    --color-service-border: #2e2f2f;  /* Low-contrast, refined border */
 }
 
 
@@ -185,9 +188,9 @@ body {
     outline: none;
 }
 .question-asking-prompt-button{
-    padding: 20px;
+    padding: 10px;
     border: 0;
-    width: 10%;
+    width: 8%;
     background-color: var(--color-service-border);
     color: var(--color-text-main);
     cursor: pointer;
@@ -256,7 +259,7 @@ body {
     display: flex;
     padding: 20px;
     background: var(--color-bg-accent);
-    border-radius: 20px 20px 0px 0px ;
+    border-radius: 10px 10px 0px 0px ;
 }
 .question p{
     margin-top: 12px;
@@ -269,7 +272,7 @@ body {
     align-items: flex-start; /* Align icon and text at the top */
     padding: 20px;
     background: var(--color-bg-answer);
-    border-radius: 0px 0px 20px 20px;
+    border-radius: 0px 0px 10px 10px;
 }
 .answer #answer-para{
     margin-top: 20px;
@@ -342,7 +345,7 @@ ul li a {
         display: flex;
         position: absolute;
         bottom: 63px;
-        left: 18%;
+        left: 20%;
         z-index: 9;
 }
 .service-toggle-pdfUpload{
@@ -417,15 +420,32 @@ input[type="file"]::file-selector-button {
 
     opacity: 0;
 }
-
-#chat-history-button{
+.chat-history-button{
     margin-left: 20px;
     margin-top: 20px;
     padding: 10px;
-    background: var(--color-bg-service);
-    border: 0.5px solid var(--color-service-border);
-    color: var(--color-text-main);
+    background: #0a2528;
+    border: 0.5px solid var(--color-primary);
+    color: var(--color-primary-glow);
 }
-#chat-history-button a{
-    color: var(--color-text-main);
+.chat-history-button a{
+    color: var(--color-primary-glow);
+}
+
+
+
+
+.alert{
+    text-align: center;
+    width: 100%;
+    background: #0a2528;
+    color: var(--color-primary-glow);
+    padding: 0px;
+}
+.alert button{
+    background: var(--color-bg-main);
+    border: none;
+    color: var(--color-primary-glow);
+    font-size: medium;
+    cursor: pointer;
 }

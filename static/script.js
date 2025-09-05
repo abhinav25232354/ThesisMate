@@ -105,3 +105,9 @@ function toggleAbout() {
         }, 20);
     }
 }
+
+
+function alert(){
+    const alertBox = document.querySelector('.alert');
+    alertBox.style.display = 'none';
+}
