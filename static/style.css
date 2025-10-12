@@ -55,6 +55,13 @@
     /* font-family: "Google Sans Code", monospace; */
     font-family: 'Nunito Sans', sans-serif;
 }
+body {
+    margin: 0;               /* remove default body margin */
+    padding: 0;              /* remove default padding */
+    overflow: hidden;        /* clip anything going outside the viewport */
+    width: 100vw;            /* make body exactly viewport width */
+    height: 100vh;           /* make body exactly viewport height */
+}
 .whole-container {
     display: flex;
     height: 100vh;
@@ -162,6 +169,10 @@ body {
     overflow-y: auto;
     padding: 0px;
     padding-bottom: 150px; /* Space for the fixed form */
+
+    /* background: url("/static/background.jpg"); */
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 .question-asking-form {
     width: 80%;
@@ -265,6 +276,12 @@ body {
     margin-top: 12px;
     margin-left: 20px;
     color: var(--color-text-main);
+
+     /* New properties for horizontal scroll */
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
+    display: inline-block;  /* ensures proper scroll */
 }
 .answer{
     display: flex;

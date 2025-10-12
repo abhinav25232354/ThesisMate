@@ -88,7 +88,8 @@ def ask():
             return render_template('index.html', chats=all_chats)
 
         # ✅ Use checkExistingEntry instead of inline checking
-        found_chat = checkExistingEntry(user_input)
+        # found_chat = checkExistingEntry(user_input)
+        found_chat = checkExistingEntry(user_input or file_path or url_input)
 
         if found_chat != "No entry Matched":
             # Only show the found chat, do not append or save duplicate
@@ -96,11 +97,13 @@ def ask():
 
         # Not found, do a new API request
         try:
+            print(f"User Input: {user_input}, File: {file_path}, URL: {url_input}")
             answer = askAI(
-                userInput=user_input if user_input else None,
-                file=file_path if file_path else None,
-                url=url_input if url_input else None
+                userInput=user_input,
+                file=file_path,
+                url=url_input
             )
+            print(f"API called")
 
             citations = citation_function(answer[0])
             content = answer[1]
@@ -114,7 +117,7 @@ def ask():
             all_chats.append(chat_entry)
             with open("chat_history.txt", "a", encoding="utf-8") as f:
                 f.write(str(chat_entry) + "\n")
-
+                
             return render_template('index.html', chats=all_chats)
 
         except Exception as e:

@@ -1,11 +1,11 @@
 from openai import OpenAI
 import requests
-
 import requests
 import os
 from bs4 import BeautifulSoup
 import html
 import re
+from PyPDF2 import PdfReader
 
 
 
@@ -90,124 +90,116 @@ def polished_markdown_to_html(text):
 def askAI(userInput=None, file=None, url=None):
     API_KEY = "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"
     API_URL = "https://api.perplexity.ai/chat/completions"
-    HEADERS = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
+    HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
     MODEL_NAME = "sonar"
-    # MODEL_NAME = "sonar-deep-research"
 
-    # Handle file upload
-    if file:
-        ext = os.path.splitext(file)[1].lower()
-        try:
+    try:
+        # Handle file input
+        if file:
+            ext = os.path.splitext(file)[1].lower()
             if ext == ".txt":
                 with open(file, "r", encoding="utf-8") as f:
                     userInput = f.read()
             elif ext == ".pdf":
-                from PyPDF2 import PdfReader
                 reader = PdfReader(file)
-                userInput = "\n".join([page.extract_text() for page in reader.pages])
+                userInput = "\n".join([page.extract_text() or "" for page in reader.pages])
             elif ext in [".docx", ".doc"]:
-                import docx
                 doc = docx.Document(file)
                 userInput = "\n".join([p.text for p in doc.paragraphs])
             else:
-                raise ValueError("Unsupported file format. Use txt, pdf, or docx.")
-        except Exception as e:
-            return [], f"<p>Error reading file: {str(e)}</p>", []
+                return [], f"<p>Unsupported file format: {ext}</p>", []
 
-    # Handle URL analysis
-    elif url:
-        try:
-            page = requests.get(url, timeout=10)
+        # Handle URL input
+        if url:
+            page = requests.get(url, timeout=15)
             soup = BeautifulSoup(page.content, "html.parser")
-            # Extract main readable text
             for script in soup(["script", "style"]):
                 script.extract()
-            userInput = soup.get_text(separator="\n")
-            userInput = "\n".join([line.strip() for line in userInput.splitlines() if line.strip()])
-        except Exception as e:
-            return [], f"<p>Error fetching URL: {str(e)}</p>", []
+            userInput = "\n".join([line.strip() for line in soup.get_text(separator="\n").splitlines() if line.strip()])
 
-    # Ensure we have something to process
-    if not userInput:
-        return [], "<p>No input provided.</p>", []
+        if not userInput:
+            return [], "<p>No input provided.</p>", []
 
-    # payload = {
-    #     "model": MODEL_NAME,
-    #     "messages": [
-    #         {"role": "system", "content": "You are a helpful research assistant. Always respond with very long and detailed answers. Don't add markdown syntax bold, italic, underline, bullets, citations and reference markers etc."},
-    #         {"role": "user", "content": userInput}
-    #     ],
-    #     "max_tokens": 700,
-    #     "temperature": 0.7,
-    # }
-    with open("chat_history.txt", "r") as f:
-        context = f.read()
+        # Load chat history safely
+        context = ""
+        if os.path.exists("chat_history.txt"):
+            try:
+                with open("chat_history.txt", "r", encoding="utf-8") as f:
+                    context = f.read()
+            except Exception as e:
+                print("Error reading chat_history.txt:", e)
 
-    payload = {
-        "model": MODEL_NAME,
-        "messages": [
-        {
-        "role": "system",
-        "content": (
-            "You are an intelligent assistant. "
-            "If the user asks casual greetings or small talk, reply naturally and concisely. "
-            "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
-            "If a file is attached with the question, use its content to inform your response."
-            "If the attached file is a research paper, thesis, or article, summarize its key points and findings in your answer."
-            "If the user input contains multiple questions, answer each one thoroughly."
-            "If the attached file is research then classify the research type (e.g., empirical study, literature review, theoretical paper) and summarize its main contributions accordingly. "
-            "Support your response with **10–20 citations**, ensuring diversity of sources "
-            "(academic papers, books, reputable articles). "
-            "Do not summarize too briefly—expand fully."
-            f"{context}"
-        )
+        print(f"DEBUG: Sending to API -> userInput length: {len(userInput)}")
+
+        payload = {
+            "model": MODEL_NAME,
+            "messages": [
+            {
+            "role": "system",
+            "content": (
+                "You are an intelligent assistant. "
+                "If the user asks casual greetings or small talk, reply naturally and concisely. "
+                "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
+                "If a file is attached with the question, use its content to inform your response."
+                "If the attached file is a research paper, thesis, or article, summarize its key points and findings in your answer."
+                "If the user input contains multiple questions, answer each one thoroughly."
+                "If the attached file is research then classify the research type (e.g., empirical study, literature review, theoretical paper) and summarize its main contributions accordingly. "
+                "Support your response with **10–20 citations**, ensuring diversity of sources "
+                "(academic papers, books, reputable articles). "
+                "Do not summarize too briefly—expand fully."
+                f"{context}"
+            )
+            },
+            {
+            "role": "user",
+            "content": userInput
+            }
+        ],
+        "temperature": 0.7,
+        "max_tokens": 3000,                # OpenAI-compatible parameter (maps from your max_output_tokens)
+        "top_p": 1.0,                     # Optional: nucleus sampling (default if not specified)
+        "frequency_penalty": 0.0,         # Optional
+        "presence_penalty": 0.0,          # Optional
+        "stream": False,                  # Optional: set to true for streaming responses
+        # Perplexity-specific parameters:
+        "search_mode": "academic",             # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
+        "search_domain_filter": [],       # e.g., ["wikipedia.org"] or ["-reddit.com"] :contentReference[oaicite:1]{index=1}
+        "search_recency_filter": None,    # e.g., "day", "week", "month", "year" :contentReference[oaicite:2]{index=2}
+        "search_after_date_filter": None, # e.g., "3/1/2025" (MM/DD/YYYY format) :contentReference[oaicite:3]{index=3}
+        "search_before_date_filter": None,# same format :contentReference[oaicite:4]{index=4}
+        "last_updated_after_filter": None,
+        "last_updated_before_filter": None,# if you want “last modified” filtering :contentReference[oaicite:5]{index=5}
+        "return_images": False,           # Include image URLs if true :contentReference[oaicite:6]{index=6}
+        "image_domain_filter": [],        # Requires return_images = true; e.g. ["-gettyimages.com"] :contentReference[oaicite:7]{index=7}
+        "image_format_filter": [],        # e.g. ["png", "gif"] :contentReference[oaicite:8]{index=8}
+        "return_related_questions": False,# Optional: include related questions :contentReference[oaicite:9]{index=9}
+        "web_search_options": {           # Optional per advanced control (especially academic mode)
+        "search_context_size": "high"    # or "high" :contentReference[oaicite:10]{index=10}
         },
-        {
-        "role": "user",
-        "content": userInput
+        "response_format": None           # Structured output specifier (JSON Schema or Regex) :contentReference[oaicite:11]{index=11}
         }
-    ],
-    "temperature": 0.7,
-    "max_tokens": 3000,                # OpenAI-compatible parameter (maps from your max_output_tokens)
-    "top_p": 1.0,                     # Optional: nucleus sampling (default if not specified)
-    "frequency_penalty": 0.0,         # Optional
-    "presence_penalty": 0.0,          # Optional
-    "stream": False,                  # Optional: set to true for streaming responses
-    # Perplexity-specific parameters:
-    "search_mode": "academic",             # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
-    "search_domain_filter": [],       # e.g., ["wikipedia.org"] or ["-reddit.com"] :contentReference[oaicite:1]{index=1}
-    "search_recency_filter": None,    # e.g., "day", "week", "month", "year" :contentReference[oaicite:2]{index=2}
-    "search_after_date_filter": None, # e.g., "3/1/2025" (MM/DD/YYYY format) :contentReference[oaicite:3]{index=3}
-    "search_before_date_filter": None,# same format :contentReference[oaicite:4]{index=4}
-    "last_updated_after_filter": None,
-    "last_updated_before_filter": None,# if you want “last modified” filtering :contentReference[oaicite:5]{index=5}
-    "return_images": False,           # Include image URLs if true :contentReference[oaicite:6]{index=6}
-    "image_domain_filter": [],        # Requires return_images = true; e.g. ["-gettyimages.com"] :contentReference[oaicite:7]{index=7}
-    "image_format_filter": [],        # e.g. ["png", "gif"] :contentReference[oaicite:8]{index=8}
-    "return_related_questions": False,# Optional: include related questions :contentReference[oaicite:9]{index=9}
-    "web_search_options": {           # Optional per advanced control (especially academic mode)
-      "search_context_size": "high"    # or "high" :contentReference[oaicite:10]{index=10}
-    },
-    "response_format": None           # Structured output specifier (JSON Schema or Regex) :contentReference[oaicite:11]{index=11}
-    }
 
 
 
-    response = requests.post(API_URL, headers=HEADERS, json=payload)
-    response.raise_for_status()
-    data = response.json()
+        try:
+            response = requests.post(API_URL, headers=HEADERS, json=payload, timeout=60)
+            response.raise_for_status()
+            data = response.json()
+        except Exception as e:
+            print("API request failed:", e)
+            return [], f"<p>API request error: {e}</p>", []
 
-    answer = data["choices"][0]["message"]["content"]
-    # Format answer as HTML paragraphs for display
-    # content = "<p>" + answer.replace("\n\n", "</p><p>").replace("\n", "<br><br>") + "</p>"
-    content = polished_markdown_to_html(answer)
-    citations = data.get("citations", [])
-    search_results = data.get("search_results", [])
+        answer_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        content = polished_markdown_to_html(answer_text)
+        citations = data.get("citations", [])
+        search_results = data.get("search_results", [])
 
-    return citations, content, search_results
+        print("DEBUG: API call successful")
+        return citations, content, search_results
+
+    except Exception as e:
+        print("askAI internal error:", e)
+        return [], f"<p>Internal error: {e}</p>", []
 
 
 
