@@ -39,7 +39,7 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_right_alt" />
     <link rel="stylesheet" media="(max-width: 1250px)" href="/static/Mobile.css">
-    <title>ThesisMate - By DexterityCoder</title>
+    <title>ThesisMate - By Abhinav</title>
 </head>
 
 <body>
@@ -130,8 +130,12 @@
                                 <button class="chat-history-button"><a style="text-decoration: none;"
                                         href="{{ url_for('history') }}">Show Chat History</a></button>
                                 <br>
-                                <button class="chat-history-button"><a style="text-decoration: none;"
-                                        href="{{ url_for('analyzeGap') }}">Analyze Gaps (Only for Research)</a></button>
+                                <form method="post" action="/analyzeGap" style="display:inline;">
+                                    <input type="hidden" name="question" value="{{ chat.question }}">
+                                    <button class="chat-history-button" type="submit"
+                                        style="cursor: pointer;">Analyze Gaps (Only for
+                                        Research)</a></button>
+                                </form>
                                 <br>
                                 <form method="post" action="/regenerate" style="display:inline;">
                                     <input type="hidden" name="question" value="{{ chat.question }}">
@@ -151,7 +155,7 @@
                     <div id="welcome">
                         <h1>ThesisMate</h1>
                         <p>Made By <a onclick="toggleAbout()"
-                                style="color: rgb(49 184 198); cursor: pointer;">DexterityCoder</a>
+                                style="color: rgb(49 184 198); cursor: pointer;">Abhinav</a>
                         </p>
                     </div>
                     <div class="services">

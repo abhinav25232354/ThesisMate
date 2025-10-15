@@ -249,30 +249,73 @@ def history():
 @app.route("/analyzeGap", methods=["GET", "POST"])
 def analyzeGap():
     try:
-        # Get last chat context from history
-        with open("chat_history.txt", "r") as f:
-            last_line = [line for line in f if line.strip()][-1].strip()
-        context = last_line
+        question = request.form.get('question', '').strip()
+        import json
+        import os
 
-        # Run gap analysis prompt
-        Gaps = askAI("Identify research gaps based on the above context." + context)
-        citations = citation_function(Gaps[0])
-        content = Gaps[1]
-        search_results = search_results_function(Gaps[2])
+        file_path = "C:/Workspace/ThesisMate/chat_history.txt"
+
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                lines = f.readlines()
+                if lines:
+                    last_line = lines[-1].strip()
+                    print("Debug Raw:", last_line)
+
+                    # Parse the JSON safely
+                    try:
+                        data = json.loads(last_line)
+                        print("Debug Parsed JSON:", data)
+                    except json.JSONDecodeError as e:
+                        print("JSON Decode Error:", e)
+                        data = {}
+
+                    # Extract context if it exists
+                    context_str = data.get("answer", "") if isinstance(data, dict) else ""
+                    print("Context:", context_str)
+
+                else:
+                    context_str = ""
+                    print("Debug: File empty")
+
+            print(f"Debug: {context_str}")
+        # askAI using askAI with the context
+        prompt = f"""
+            You are an expert academic research assistant. 
+            Based on the following context and question, identify meaningful and researchable gaps that future researchers could explore.
+
+            Context (previous discussion or summary): {context_str[:500]}
+
+            Question: {question}
+
+            Your goal:
+            1. Analyze what has already been studied or known.
+            2. Identify missing elements, underexplored dimensions, or inconsistent findings.
+            3. Suggest how future researchers can address these gaps (with methods, perspectives, or data improvements).
+            4. Ensure your response is structured under these headings:
+            - **Observed Trends**
+            - **Existing Limitations**
+            - **Potential Research Gaps**
+            - **Future Research Directions**
+
+            Be concise, analytical, and academic in tone. Focus only on gap discovery and future scope, not on summarizing the full paper.
+            """
+        
+        answer = askAI(prompt)
+        citations = citation_function(answer[0])
+        content = answer[1]
+        search_results = search_results_function(answer[2])
         chat_entry = {
-            "question": "Potential Gaps in research based on the above context.",
+            "question": question + " (Gap Analysis)",
             "answer": content,
             "citations": citations,
             "search_results": search_results
         }
         chats.append(chat_entry)
-        with open("chat_history.txt", "a") as f:
+        with open("chat_history.txt", "a", encoding="utf-8") as f:
             f.write(str(chat_entry) + "\n")
-
-        return render_template(
-            'index.html',
-            chats=chats[-1:]
-        )
+        return render_template('index.html', chats=chats[-1:])
+    
     except Exception as e:
         return render_template('index.html', answer=f"Error: {str(e)}")
 
