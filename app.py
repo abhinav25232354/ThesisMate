@@ -59,11 +59,10 @@ chats = []
 def ask():
     if request.method == 'POST':
         user_input = request.form.get('question', '').strip()
-        url_input = request.form.get('url', '').strip()   # 👈 for handling URL input
-        uploaded_file = request.files.get('fileInput')   # 👈 safe get (no crash if missing)
+        url_input = request.form.get('url', '').strip() 
+        uploaded_file = request.files.get('fileInput')
 
-        all_chats = []  # ✅ Always initialize here
-
+        all_chats = []
         file_path = None
         if uploaded_file and uploaded_file.filename != '':
             os.makedirs("uploads", exist_ok=True)
@@ -87,7 +86,6 @@ def ask():
                             continue
             return render_template('index.html', chats=all_chats)
 
-        # ✅ Use checkExistingEntry instead of inline checking
         # found_chat = checkExistingEntry(user_input)
         found_chat = checkExistingEntry(user_input or file_path or url_input)
 
@@ -199,43 +197,6 @@ def regenerate():
     
     except Exception as e:
         return render_template('index.html', answer=f"Error: {str(e)}")
-    #     # Find the chat entry for this question
-    #     chat_context = None
-    #     if os.path.exists("chat_history.txt"):
-    #         with open("chat_history.txt", "r", encoding="utf-8") as f:
-    #             for line in f:
-    #                 if not line.strip():
-    #                     continue
-    #                 try:
-    #                     chat_obj = eval(line.strip())
-    #                 except Exception:
-    #                     continue
-    #                 if isinstance(chat_obj, dict) and chat_obj.get("question", "").strip().lower() == question.lower():
-    #                     chat_context = chat_obj
-    #                     break
-    #     # If found, use its context (the answer and possibly previous context)
-    #     if chat_context:
-    #         context_str = chat_context["answer"]
-    #     else:
-    #         context_str = ""
-    #     # Regenerate using askAI with the context
-    #     prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context_str}\nQuestion: {question}"
-    #     answer = askAI(prompt)
-    #     citations = citation_function(answer[0])
-    #     content = answer[1]
-    #     search_results = search_results_function(answer[2])
-    #     chat_entry = {
-    #         "question": question + " (Regenerated)",
-    #         "answer": content,
-    #         "citations": citations,
-    #         "search_results": search_results
-    #     }
-    #     chats.append(chat_entry)
-    #     with open("chat_history.txt", "a", encoding="utf-8") as f:
-    #         f.write(str(chat_entry) + "\n")
-    #     return render_template('index.html', chats=chats[-1:])
-    # except Exception as e:
-    #     return render_template('index.html', answer=f"Error: {str(e)}")
 
 @app.route('/about', methods=['GET'])
 def about():
@@ -322,4 +283,3 @@ def analyzeGap():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # analyzeGap()

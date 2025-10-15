@@ -20,8 +20,6 @@
         rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
     <link rel="shortcut icon" href="/static/logo.ico" type="image/x-icon">
-
-    <!-- Highlight.js for code blocks -->
     <script>
         MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
@@ -31,7 +29,6 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <!-- highlight.js -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
@@ -55,11 +52,8 @@
         </div>
         <div class="whole-container">
             <div class="left">
-                <!-- It Contains SideBar -->
                 <div class="logo">
                     <img id="logo" src="/static/logo.png" alt="AI Researcher Logo" href="{{url_for('index')}}">
-                    <!-- <h2 id="logo-text"><a style="text-decoration: none; color: white;"
-                            href="{{url_for('index')}}">DexterityCoder</a></h2> -->
                     <h2 id="logo-text"><a style="text-decoration: none; color: white;"
                             href="{{url_for('index')}}">ThesisMate</a></h2>
                 </div>
@@ -106,7 +100,6 @@
 
             {% if chats and chats|length > 0 %}
             <div class="right-after">
-                <!-- It Contains User Question and AI Answer -->
                 <div class="right-content">
                     {% for chat in chats %}
                     <div class="question">
@@ -116,7 +109,6 @@
                     <div class="answer">
                         <div class="answer-content">
                             <div id="answer-para">{{ chat.answer|safe }}</div>
-                            <!-- <div id="answer-para2">{{ answer|safe }}</div> -->
                             <h3 class="citation">Citations:</h3>
                             {% if chat.citations %}
                             <p class="citation-links">{{ chat.citations|safe }}</p>
@@ -151,7 +143,6 @@
             {% else %}
             <div class="right-before">
                 <div class="right-content">
-                    <!-- It Contains User Question and AI Answer -->
                     <div id="welcome">
                         <h1>ThesisMate</h1>
                         <p>Made By <a onclick="toggleAbout()"
@@ -159,7 +150,6 @@
                         </p>
                     </div>
                     <div class="services">
-                        <!-- It Contains Boxes of different services -->
                         <div class="service" id="pdf-toggle" onclick="togglePDFUpload()">
                             <h2>PDF Upload & Analysis </h2>
                             <p>Extract text, metadata (title, pages, words, reading time).</p>
@@ -182,7 +172,6 @@
 
 
 
-        <!-- About Section -->
         <div class="about">
             <h2>About AI Researcher</h2>
             <p>

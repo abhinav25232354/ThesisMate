@@ -1,25 +1,6 @@
 .mobile{
     display: none;
 }
-/* Color Variables */
-/* :root {
-    --color-bg-main: #181818;
-    --color-bg-secondary: #131313;
-    --color-bg-accent: #202020;
-    --color-bg-service: #181818;
-    --color-bg-answer: #3f3f3f;
-    --color-bg-hover: #116cff11;
-    --color-bg-scrollbar: #232323;
-    --color-bg-scrollbar-hover: #444;
-    --color-primary: #116dff;
-    --color-primary-light: #116cff;
-    --color-text-main: #fff;
-    --color-text-secondary: #707070;
-    --color-text-muted: #888;
-    --color-text-light: #aaa;
-    --color-text-logo: #919191;
-    --color-service-border: #414141;
-} */
 :root {
     /* ==== Backgrounds ==== */
     --color-bg-main: #1f2121;         /* Deep dark base—unchanged for signature feel */
@@ -51,16 +32,14 @@
 *{
     margin: 0;
     padding: 0;
-    /* font-family: "Lora", serif; */
-    /* font-family: "Google Sans Code", monospace; */
     font-family: 'Nunito Sans', sans-serif;
 }
 body {
-    margin: 0;               /* remove default body margin */
-    padding: 0;              /* remove default padding */
-    overflow: hidden;        /* clip anything going outside the viewport */
-    width: 100vw;            /* make body exactly viewport width */
-    height: 100vh;           /* make body exactly viewport height */
+    margin: 0;         
+    padding: 0;       
+    overflow: hidden; 
+    width: 100vw;         
+    height: 100vh;           
 }
 .whole-container {
     display: flex;
@@ -79,8 +58,7 @@ body {
 
     border-right: 1px solid var(--color-service-border);
 }
-/* Minimal custom scrollbar for left pane and all scrollable areas */
-/* Minimal custom scrollbar for left pane and all scrollable areas */
+/* Custom Scrollbar Styling */
 .left::-webkit-scrollbar,
 .right-content::-webkit-scrollbar,
 body::-webkit-scrollbar {
@@ -170,7 +148,6 @@ body {
     padding: 0px;
     padding-bottom: 150px; /* Space for the fixed form */
 
-    /* background: url("/static/background.jpg"); */
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -181,7 +158,6 @@ body {
     bottom: 20px;
     display: flex;
     justify-content: center;
-    /* background: var(--color-bg-secondary); */
     z-index: 10;
     padding-bottom: 0;
 }
@@ -191,7 +167,6 @@ body {
     width: 50%;
     border-radius: 20px 0px 0px 20px;
     background: var(--color-bg-secondary);
-    /* backdrop-filter: blur(10px); */
     font-size: medium;
     color: var(--color-text-main);
 }
@@ -251,13 +226,6 @@ body {
     transition: 0.5s;
     border: 0.5px solid var(--color-service-border);
 }
-/* .service:hover{
-    background: var(--color-bg-hover);
-    color: var(--color-primary);
-    cursor: pointer;
-    border: 0.5px solid var(--color-primary);
-} */
-
 
 /* Right Pane After Question is Asked */
 .right-after {
@@ -316,23 +284,18 @@ ul{
     margin-left: 20px;
     margin-top: 10px;
 }
-/* .citation-links {
-    margin-top: 10px;
-    margin-left: 20px;
-    color: #116dff; */
-/* } */
 ul li a {
     color: var(--color-primary);
     text-decoration: none;
     margin-top: 5px;
 
     /* --- Fix long URL wrapping --- */
-    display: inline-block;      /* allow block behavior inside flex/inline */
-    max-width: 100%;            /* never overflow container */
-    white-space: normal;        /* allow wrapping */
-    word-wrap: break-word;      /* legacy support */
-    word-break: break-word;     /* break long words if needed */
-    overflow-wrap: anywhere;    /* modern browsers */
+    display: inline-block;  
+    max-width: 100%;         
+    white-space: normal;   
+    word-wrap: break-word;
+    word-break: break-word;    
+    overflow-wrap: anywhere;    
 }
 
 #answer-logo {
@@ -352,12 +315,6 @@ ul li a {
     }
 }
 
-/* Services toggles */
- /* <div class="service-toggles">
-                <button class="service-toggle-pdfUpload" id="pdf-upload">UploadPDF</button>
-                <button class="service-toggle-exportPDF" id="pdf-upload">ExportPDF</button>
-            </div> */
-
 .service-toggles {
         display: flex;
         position: absolute;
@@ -372,8 +329,6 @@ ul li a {
     padding: 10px;
     margin: 5px;
     border-radius: 12px;
-    /* width: 100px; */
-    /* display: none; */
 }
 .service-toggle-exportPDF{
     border: 0.5px solid var(--color-primary);
@@ -425,13 +380,13 @@ input[type="file"]::file-selector-button {
     padding: 20px;
     line-height: 1.6;
     background: var(--color-bg-secondary);
-    position: absolute; /* or fixed */
+    position: absolute;
     top: 15%;
     left: 25%;
-    width: 70%;          /* define width */
-    height: 75%;         /* define height */
+    width: 70%;       
+    height: 75%;    
     z-index: 1;
-    overflow-y: auto;    /* scroll if content overflows */
+    overflow-y: auto; 
     border-radius: 12px;
     display: none;
 

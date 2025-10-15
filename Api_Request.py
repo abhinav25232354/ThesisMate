@@ -202,25 +202,7 @@ def askAI(userInput=None, file=None, url=None):
             "temperature": 0.7,
             "max_tokens": 3000,  # OpenAI-compatible parameter (maps from your max_output_tokens)
             "top_p": 1.0,  # Optional: nucleus sampling (default if not specified)
-            "frequency_penalty": 0.0,  # Optional
-            "presence_penalty": 0.0,  # Optional
-            "stream": False,  # Optional: set to true for streaming responses
-            # Perplexity-specific parameters:
             "search_mode": "academic",  # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
-            "search_domain_filter": [],  # e.g., ["wikipedia.org"] or ["-reddit.com"] :contentReference[oaicite:1]{index=1}
-            "search_recency_filter": None,  # e.g., "day", "week", "month", "year" :contentReference[oaicite:2]{index=2}
-            "search_after_date_filter": None,  # e.g., "3/1/2025" (MM/DD/YYYY format) :contentReference[oaicite:3]{index=3}
-            "search_before_date_filter": None,  # same format :contentReference[oaicite:4]{index=4}
-            "last_updated_after_filter": None,
-            "last_updated_before_filter": None,  # if you want “last modified” filtering :contentReference[oaicite:5]{index=5}
-            "return_images": False,  # Include image URLs if true :contentReference[oaicite:6]{index=6}
-            "image_domain_filter": [],  # Requires return_images = true; e.g. ["-gettyimages.com"] :contentReference[oaicite:7]{index=7}
-            "image_format_filter": [],  # e.g. ["png", "gif"] :contentReference[oaicite:8]{index=8}
-            "return_related_questions": False,  # Optional: include related questions :contentReference[oaicite:9]{index=9}
-            "web_search_options": {  # Optional per advanced control (especially academic mode)
-                "search_context_size": "high"  # or "high" :contentReference[oaicite:10]{index=10}
-            },
-            "response_format": None,  # Structured output specifier (JSON Schema or Regex) :contentReference[oaicite:11]{index=11}
         }
 
         try:
