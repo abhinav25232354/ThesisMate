@@ -146,40 +146,14 @@ def ask():
 
 @app.route('/regenerate', methods=['POST', 'GET'])
 def regenerate():
-    print("print reached")
     try:
         question = request.form.get('question', '').strip()
-        import json
-        import os
+        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+            context = lines[-1]
 
-        file_path = "C:/Workspace/ThesisMate/chat_history.txt"
-
-        if os.path.exists(file_path):
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                lines = f.readlines()
-                if lines:
-                    last_line = lines[-1].strip()
-                    print("Debug Raw:", last_line)
-
-                    # Parse the JSON safely
-                    try:
-                        data = json.loads(last_line)
-                        print("Debug Parsed JSON:", data)
-                    except json.JSONDecodeError as e:
-                        print("JSON Decode Error:", e)
-                        data = {}
-
-                    # Extract context if it exists
-                    context_str = data.get("answer", "") if isinstance(data, dict) else ""
-                    print("Context:", context_str)
-
-                else:
-                    context_str = ""
-                    print("Debug: File empty")
-
-            print(f"Debug: {context_str}")
-        # Regenerate using askAI with the context
-        prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context_str}\nQuestion: {question}"
+        prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context}\nQuestion: {question}"
         answer = askAI(prompt)
         citations = citation_function(answer[0])
         content = answer[1]
@@ -211,41 +185,16 @@ def history():
 def analyzeGap():
     try:
         question = request.form.get('question', '').strip()
-        import json
-        import os
+        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+            context = lines[-1]
 
-        file_path = "C:/Workspace/ThesisMate/chat_history.txt"
-
-        if os.path.exists(file_path):
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                lines = f.readlines()
-                if lines:
-                    last_line = lines[-1].strip()
-                    print("Debug Raw:", last_line)
-
-                    # Parse the JSON safely
-                    try:
-                        data = json.loads(last_line)
-                        print("Debug Parsed JSON:", data)
-                    except json.JSONDecodeError as e:
-                        print("JSON Decode Error:", e)
-                        data = {}
-
-                    # Extract context if it exists
-                    context_str = data.get("answer", "") if isinstance(data, dict) else ""
-                    print("Context:", context_str)
-
-                else:
-                    context_str = ""
-                    print("Debug: File empty")
-
-            print(f"Debug: {context_str}")
-        # askAI using askAI with the context
         prompt = f"""
             You are an expert academic research assistant. 
             Based on the following context and question, identify meaningful and researchable gaps that future researchers could explore.
 
-            Context (previous discussion or summary): {context_str[:500]}
+            Context (previous discussion or summary): {context}
 
             Question: {question}
 

@@ -159,16 +159,18 @@ def askAI(userInput=None, file=None, url=None):
         optimal_prompt = f"""
             You are an AI Research Assistant. 
             Answer the following question comprehensively using these perspectives:
-            1. Philosophy
-            2. History
-            3. Theory
-            4. Methodology
-            5. Challenges
-            6. Research Gaps
-            7. Future Scope
-            8. Applications
-            9. Ethics
-            10. Meta-Reflection
+            1. Types of Research/Topic (qualitative, quantitative, mixed methods, hybrid, etc.)
+            2. Philosophy
+            3. History
+            4. Theory
+            5. Methodology
+            6. Challenges
+            7. Research Gaps
+            8. Future Scope
+            9. Applications
+            10. Ethics
+            11. Meta-Reflection
+            12. Summary
 
             Question: {userInput}
             Context: {context[:2000]}
@@ -211,7 +213,8 @@ def askAI(userInput=None, file=None, url=None):
             data = response.json()
         except Exception as e:
             print("API request failed:", e)
-            return [], f"<p>API request error: {e}</p>", []
+            # return [], f"<p>API request error: {e}</p>", []
+            return [], "<p>Sorry, The Context is too big to process (Try with shorter)</p>", []
 
         answer_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
         content = polished_markdown_to_html(answer_text)
@@ -223,7 +226,8 @@ def askAI(userInput=None, file=None, url=None):
 
     except Exception as e:
         print("askAI internal error:", e)
-        return [], f"<p>Internal error: {e}</p>", []
+        # return [], f"<p>Internal error: {e}</p>", []
+        return [], f"<p>Will be right back (internal error occurred)</p>", []
 
 
 if __name__ == "__main__":
