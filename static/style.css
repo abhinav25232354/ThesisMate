@@ -158,7 +158,6 @@ body {
     bottom: 20px;
     display: flex;
     justify-content: center;
-    z-index: 10;
     padding-bottom: 0;
 }
 .question-asking-prompt{
@@ -320,7 +319,7 @@ ul li a {
         position: absolute;
         bottom: 63px;
         left: 20%;
-        z-index: 9;
+        z-index: 6;
 }
 .service-toggle-pdfUpload{
     border: 0.5px solid var(--color-bg-accent);
@@ -420,4 +419,64 @@ input[type="file"]::file-selector-button {
     color: var(--color-primary-glow);
     font-size: medium;
     cursor: pointer;
+}
+
+
+
+
+#score-dashboard-button{
+    padding: 8px;
+    background: var(--color-bg-accent);
+    color: var(--color-text-main);
+    border: 0px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 9;
+}
+#score-dashboard-card{
+    /* background: var(--color-primary-light); */
+    background: #3a99a52d;
+    backdrop-filter: blur(10px);
+    z-index: 9;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    display: none;
+}
+
+/*Confidence score card*/
+#score-dashboard-card {
+    height: fit-content;
+    width: 300px;
+    padding: 20px;
+    border-radius: 20px;
+    color: var(--color-text-main);
+}
+.score-blocks {
+    border-radius: 20px;
+}
+.general-evaluation h3 {
+    margin-bottom: 20px;
+}
+.gap-evaluation h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.score-blocks p{
+    margin-bottom: 10px;
+    margin-top: 10px;
+        color: var(--color-text-secondary);
+}
+.confidence-bar{
+    width: 100%;
+    height: 5px;
+    background: var(--color-bg-service);
+    border-radius: 5px;
+}
+#confidence-status{
+    background: var(--color-primary);
+    border-radius: 5px;
 }

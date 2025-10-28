@@ -3,6 +3,7 @@ from Api_Request import askAI
 import markdown
 import os
 import re
+import json
 
 app = Flask(__name__)
 
@@ -148,10 +149,13 @@ def ask():
 def regenerate():
     try:
         question = request.form.get('question', '').strip()
+<<<<<<< HEAD
+=======
         file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
         with open(file_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
             context = lines[-1]
+>>>>>>> c5a72c96c0c7c293260b51039de0c3bee6e7a538
 
         prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context}\nQuestion: {question}"
         answer = askAI(prompt)
@@ -181,10 +185,42 @@ def history():
     return render_template('index.html', chats=chats)
 
 
-@app.route("/analyzeGap", methods=["GET", "POST"])
+@app.route("/analyzeGap", methods=['POST', 'GET'])
 def analyzeGap():
     try:
         question = request.form.get('question', '').strip()
+<<<<<<< HEAD
+
+        file_path = "C:/Workspace/ThesisMate/chat_history.txt"
+
+        if os.path.exists(file_path):
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                lines = f.readlines()
+                if lines:
+                    last_line = lines[-1].strip()
+                    print("Debug Raw:", last_line)
+
+                    # Parse the JSON safely
+                    try:
+                        data = json.loads(last_line)
+                        print("Debug Parsed JSON:", data)
+                    except json.JSONDecodeError as e:
+                        print("JSON Decode Error:", e)
+                        data = {}
+
+                    # Extract context if it exists
+                    context_str = data.get("answer", "") if isinstance(data, dict) else ""
+                    print("Context:", context_str)
+
+                else:
+                    context_str = ""
+                    print("Debug: File empty")
+
+            print(f"Debug: {context_str}")
+
+        # Analyze gaps using askAI with the context
+        prompt = f"Identify research gaps based on the following context: {context_str}\nQuestion: {question}"
+=======
         file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
         with open(file_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -211,6 +247,7 @@ def analyzeGap():
             Be concise, analytical, and academic in tone. Focus only on gap discovery and future scope, not on summarizing the full paper.
             """
         
+>>>>>>> c5a72c96c0c7c293260b51039de0c3bee6e7a538
         answer = askAI(prompt)
         citations = citation_function(answer[0])
         content = answer[1]
@@ -225,7 +262,10 @@ def analyzeGap():
         with open("chat_history.txt", "a", encoding="utf-8") as f:
             f.write(str(chat_entry) + "\n")
         return render_template('index.html', chats=chats[-1:])
+<<<<<<< HEAD
+=======
     
+>>>>>>> c5a72c96c0c7c293260b51039de0c3bee6e7a538
     except Exception as e:
         return render_template('index.html', answer=f"Error: {str(e)}")
 
