@@ -149,13 +149,6 @@ def ask():
 def regenerate():
     try:
         question = request.form.get('question', '').strip()
-<<<<<<< HEAD
-=======
-        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
-        with open(file_path, "r", encoding="utf-8") as file:
-            lines = file.readlines()
-            context = lines[-1]
->>>>>>> c5a72c96c0c7c293260b51039de0c3bee6e7a538
 
         prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context}\nQuestion: {question}"
         answer = askAI(prompt)
@@ -189,7 +182,6 @@ def history():
 def analyzeGap():
     try:
         question = request.form.get('question', '').strip()
-<<<<<<< HEAD
 
         file_path = "C:/Workspace/ThesisMate/chat_history.txt"
 
@@ -220,34 +212,6 @@ def analyzeGap():
 
         # Analyze gaps using askAI with the context
         prompt = f"Identify research gaps based on the following context: {context_str}\nQuestion: {question}"
-=======
-        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
-        with open(file_path, "r", encoding="utf-8") as file:
-            lines = file.readlines()
-            context = lines[-1]
-
-        prompt = f"""
-            You are an expert academic research assistant. 
-            Based on the following context and question, identify meaningful and researchable gaps that future researchers could explore.
-
-            Context (previous discussion or summary): {context}
-
-            Question: {question}
-
-            Your goal:
-            1. Analyze what has already been studied or known.
-            2. Identify missing elements, underexplored dimensions, or inconsistent findings.
-            3. Suggest how future researchers can address these gaps (with methods, perspectives, or data improvements).
-            4. Ensure your response is structured under these headings:
-            - **Observed Trends**
-            - **Existing Limitations**
-            - **Potential Research Gaps**
-            - **Future Research Directions**
-
-            Be concise, analytical, and academic in tone. Focus only on gap discovery and future scope, not on summarizing the full paper.
-            """
-        
->>>>>>> c5a72c96c0c7c293260b51039de0c3bee6e7a538
         answer = askAI(prompt)
         citations = citation_function(answer[0])
         content = answer[1]
@@ -262,10 +226,6 @@ def analyzeGap():
         with open("chat_history.txt", "a", encoding="utf-8") as f:
             f.write(str(chat_entry) + "\n")
         return render_template('index.html', chats=chats[-1:])
-<<<<<<< HEAD
-=======
-    
->>>>>>> c5a72c96c0c7c293260b51039de0c3bee6e7a538
     except Exception as e:
         return render_template('index.html', answer=f"Error: {str(e)}")
 
