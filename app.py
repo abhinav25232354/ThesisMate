@@ -3,7 +3,6 @@ from Api_Request import askAI
 import markdown
 import os
 import re
-import json
 
 app = Flask(__name__)
 
@@ -149,6 +148,10 @@ def ask():
 def regenerate():
     try:
         question = request.form.get('question', '').strip()
+        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+            context = lines[-1]
 
         prompt = f"Regenerate a detailed answer for the following question using this context as prior chat history: {context}\nQuestion: {question}"
         answer = askAI(prompt)
@@ -178,40 +181,36 @@ def history():
     return render_template('index.html', chats=chats)
 
 
-@app.route("/analyzeGap", methods=['POST', 'GET'])
+@app.route("/analyzeGap", methods=["GET", "POST"])
 def analyzeGap():
     try:
         question = request.form.get('question', '').strip()
+        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
+            context = lines[-1]
 
-        file_path = "C:/Workspace/ThesisMate/chat_history.txt"
+        prompt = f"""
+            You are an expert academic research assistant. 
+            Based on the following context and question, identify meaningful and researchable gaps that future researchers could explore.
 
-        if os.path.exists(file_path):
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                lines = f.readlines()
-                if lines:
-                    last_line = lines[-1].strip()
-                    print("Debug Raw:", last_line)
+            Context (previous discussion or summary): {context}
 
-                    # Parse the JSON safely
-                    try:
-                        data = json.loads(last_line)
-                        print("Debug Parsed JSON:", data)
-                    except json.JSONDecodeError as e:
-                        print("JSON Decode Error:", e)
-                        data = {}
+            Question: {question}
 
-                    # Extract context if it exists
-                    context_str = data.get("answer", "") if isinstance(data, dict) else ""
-                    print("Context:", context_str)
+            Your goal:
+            1. Analyze what has already been studied or known.
+            2. Identify missing elements, underexplored dimensions, or inconsistent findings.
+            3. Suggest how future researchers can address these gaps (with methods, perspectives, or data improvements).
+            4. Ensure your response is structured under these headings:
+            - **Observed Trends**
+            - **Existing Limitations**
+            - **Potential Research Gaps**
+            - **Future Research Directions**
 
-                else:
-                    context_str = ""
-                    print("Debug: File empty")
-
-            print(f"Debug: {context_str}")
-
-        # Analyze gaps using askAI with the context
-        prompt = f"Identify research gaps based on the following context: {context_str}\nQuestion: {question}"
+            Be concise, analytical, and academic in tone. Focus only on gap discovery and future scope, not on summarizing the full paper.
+            """
+        
         answer = askAI(prompt)
         citations = citation_function(answer[0])
         content = answer[1]
@@ -226,6 +225,7 @@ def analyzeGap():
         with open("chat_history.txt", "a", encoding="utf-8") as f:
             f.write(str(chat_entry) + "\n")
         return render_template('index.html', chats=chats[-1:])
+    
     except Exception as e:
         return render_template('index.html', answer=f"Error: {str(e)}")
 

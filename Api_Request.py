@@ -106,11 +106,9 @@ def polished_markdown_to_html(text):
 
 def askAI(userInput=None, file=None, url=None):
     API_KEY = "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"
-    # API_KEY = "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"
     API_URL = "https://api.perplexity.ai/chat/completions"
     HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
     MODEL_NAME = "sonar"
-
 
     try:
         # Handle file input
