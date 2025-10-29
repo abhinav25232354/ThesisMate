@@ -91,6 +91,9 @@ def ask():
 
         if found_chat != "No entry Matched":
             # Only show the found chat, do not append or save duplicate
+            with open("Evaluation.txt", "w") as eval_file:
+                eval_file.write(f"\nQ: {user_input}\nCached: {found_chat['answer']}\n\n")
+                
             return render_template('index.html', chats=[found_chat])
 
         # Not found, do a new API request
@@ -115,6 +118,9 @@ def ask():
             all_chats.append(chat_entry)
             with open("chat_history.txt", "a", encoding="utf-8") as f:
                 f.write(str(chat_entry) + "\n")
+            
+            with open("Evaluation.txt", "w") as eval_file:
+                eval_file.write(f"Q: {user_input}\nA: {content}\n\n")
                 
             return render_template('index.html', chats=all_chats)
 
