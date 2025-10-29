@@ -3,8 +3,19 @@ from Api_Request import askAI
 import markdown
 import os
 import re
+import html
 
 app = Flask(__name__)
+
+def strip_html_tags(s):
+    # 1. Remove all HTML tags
+    s = re.sub(r'<[^>]*>', '', s)
+    # 2. Decode HTML entities (e.g., &quot; → ")
+    s = html.unescape(s)
+    # 3. Remove citations like [1], [2][3][4], etc.
+    s = re.sub(r'\[\d+(?:\]\[\d+)*\]', '', s)
+    # 4. Normalize whitespace
+    return re.sub(r'\s+', ' ', s).strip()
 
 def citation_function(citations):
     links = [f'<li><a href="{url}" target="_blank">{url}</a></li>' for url in citations]
@@ -92,8 +103,9 @@ def ask():
         if found_chat != "No entry Matched":
             # Only show the found chat, do not append or save duplicate
             with open("Evaluation.txt", "w") as eval_file:
-                eval_file.write(f"\nQ: {user_input}\nCached: {found_chat['answer']}\n\n")
-                
+                format_chat = strip_html_tags(found_chat['answer'])
+                eval_file.write(f"\nQ: {user_input}\nCached: {format_chat}\n\n")
+
             return render_template('index.html', chats=[found_chat])
 
         # Not found, do a new API request
