@@ -1,6 +1,9 @@
 button = document.getElementById('question-asking-prompt-button');
 right_before = document.querySelector('.right-before');
 right_after = document.querySelector('.right-after');
+score_button = document.getElementById('score-dashboard-button');
+score_board = document.getElementById('score-dashboard-card');
+
 
 button.addEventListener('click', function () {
     right_before.style.display = 'none';
@@ -110,4 +113,12 @@ function toggleAbout() {
 function alert(){
     const alertBox = document.querySelector('.alert');
     alertBox.style.display = 'none';
+}
+
+function score_board_toggle() {
+    if (score_board.style.display != 'block') {
+        score_board.style.display = 'block';
+    } else {
+        score_board.style.display = 'none';
+    }
 }

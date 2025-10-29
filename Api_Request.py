@@ -171,10 +171,8 @@ def askAI(userInput=None, file=None, url=None):
             10. Ethics
             11. Meta-Reflection
             12. Summary
-
             Question: {userInput}
             Context: {context[:2000]}
-
             Write in academic tone with clear section headings, keeping it concise yet insightful.
             """
 

@@ -40,6 +40,88 @@
 </head>
 
 <body>
+
+    <button id="score-dashboard-button" onclick="score_board_toggle()">See Score Dashboard</button>
+    <div id="score-dashboard-card">
+      <div class="general-evaluation">
+        <h3>Evaluation Metrices</h3>
+        <div class="score-blocks">
+          <p>Confidence <i style="color: rgba(255, 255, 255, 0.205)">20%</i></p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 60%"></div>
+          </div>
+        </div>
+        <div class="score-blocks">
+          <p>
+            Relevance Score <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 70%"></div>
+          </div>
+        </div>
+        <div class="score-blocks">
+          <p>
+            Factual Accuracy Score
+            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 30%"></div>
+          </div>
+        </div>
+        <div class="score-blocks">
+          <p>
+            Completeness Score
+            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 45%"></div>
+          </div>
+        </div>
+        <div class="score-blocks">
+          <p>
+            Depth of Analysis Score
+            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 80%"></div>
+          </div>
+        </div>
+        <div class="score-blocks">
+          <p>
+            Citations Quality Score
+            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 97%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gap-evaluation">
+        <h3>Gap Evaluation Metrics</h3>
+        <div class="score-blocks">
+          <p>
+            Gap Identification Accuracy
+            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 60%"></div>
+          </div>
+        </div>
+        <div class="score-blocks">
+          <p>
+            Research Impact Potential
+            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+          </p>
+          <div class="confidence-bar">
+            <div id="confidence-status" style="height: 5px; width: 40%"></div>
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+
+    
     <div class="mobile">
         <p>Currently Not Available for Phones</p>
         <p>Please Use a Laptop or Desktop to Access This Application</p>
