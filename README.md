@@ -1,6 +1,6 @@
-# ResearcherBuddy
+# ThesisMate
 
-ResearcherBuddy is a Flask-based web application designed to help students, professionals, and researchers explore, analyze, and summarize academic content more effectively. It integrates with AI models to process queries, research papers, and URLs, providing structured answers, citations, and research gap detection.  
+ThesisMate is a Flask-based web application designed to help students, professionals, and researchers explore, analyze, and summarize academic content more effectively. It integrates with AI models to process queries, research papers, and URLs, providing structured answers, citations, and research gap detection.  
 
 The project is developed and maintained under the **DexterityCoder** brand.
 
@@ -67,8 +67,8 @@ The project is developed and maintained under the **DexterityCoder** brand.
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/researcherbuddy.git
-   cd researcherbuddy
+   git clone https://github.com/abhinav25232354/ThesisMate
+   cd ThesisMate
    ```
 
 2. Create and activate a virtual environment:
