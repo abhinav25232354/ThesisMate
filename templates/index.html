@@ -43,56 +43,48 @@
 
     <button id="score-dashboard-button" onclick="score_board_toggle()">See Score Dashboard</button>
     <div id="score-dashboard-card">
+      {% if evaluation %}
       <div class="general-evaluation">
-        <h3>Evaluation Metrices</h3>
+        <h3>Evaluation Metrics</h3>
         <div class="score-blocks">
-          <p>Confidence <i style="color: rgba(255, 255, 255, 0.205)">20%</i></p>
+          <p>Answer Confidence Level <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.confidence|default(0) }}%</i></p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 60%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.confidence|default(0) }}%"></div>
           </div>
         </div>
         <div class="score-blocks">
           <p>
-            Relevance Score <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+            Context Relevance <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.relevance|default(0) }}%</i>
           </p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 70%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.relevance|default(0) }}%"></div>
           </div>
         </div>
         <div class="score-blocks">
           <p>
-            Factual Accuracy Score
-            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+            Answer Coverage
+            <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.completeness|default(0) }}%</i>
           </p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 30%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.completeness|default(0) }}%"></div>
           </div>
         </div>
         <div class="score-blocks">
           <p>
-            Completeness Score
-            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+            Depth & Insightfulness
+            <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.depth|default(0) }}%</i>
           </p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 45%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.depth|default(0) }}%"></div>
           </div>
         </div>
         <div class="score-blocks">
           <p>
-            Depth of Analysis Score
-            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+            Evidence & Citation Quality
+            <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.citations|default(0) }}%</i>
           </p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 80%"></div>
-          </div>
-        </div>
-        <div class="score-blocks">
-          <p>
-            Citations Quality Score
-            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
-          </p>
-          <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 97%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.citations|default(0) }}%"></div>
           </div>
         </div>
       </div>
@@ -101,24 +93,25 @@
         <h3>Gap Evaluation Metrics</h3>
         <div class="score-blocks">
           <p>
-            Gap Identification Accuracy
-            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+            Knowledge Gap Detection Accuracy
+            <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.gap_accuracy|default(0) }}%</i>
           </p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 60%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.gap_accuracy|default(0) }}%"></div>
           </div>
         </div>
         <div class="score-blocks">
           <p>
-            Research Impact Potential
-            <i style="color: rgba(255, 255, 255, 0.205)">20%</i>
+            Overall Research Value
+            <i style="color: rgba(255, 255, 255, 0.205)">{{ evaluation.impact|default(0) }}%</i>
           </p>
           <div class="confidence-bar">
-            <div id="confidence-status" style="height: 5px; width: 40%"></div>
+            <div id="confidence-status" style="height: 5px; width: {{ evaluation.impact|default(0) }}%"></div>
           </div>
         </div>
         <br>
       </div>
+      {% endif %}
     </div>
 
     
@@ -129,9 +122,9 @@
 
     <div id="whole-content-on-the-page">
 
-        <div class="alert">
+        <!-- <div class="alert">
             <p>Litreature review will be available soon. <button onclick="alert()">&nbsp;x&nbsp;</button></p>
-        </div>
+        </div> -->
         <div class="whole-container">
             <div class="left">
                 <div class="logo">

@@ -426,7 +426,7 @@ input[type="file"]::file-selector-button {
 #score-dashboard-button{
     padding: 8px;
     background: var(--color-bg-accent);
-    color: var(--color-text-main);
+    color: var(--color-text-logo);
     border: 0px;
     position: absolute;
     right: 10px;
@@ -438,7 +438,7 @@ input[type="file"]::file-selector-button {
 #score-dashboard-card{
     /* background: var(--color-primary-light); */
     background: #3a99a52d;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     z-index: 9;
     position: absolute;
     right: 10px;
@@ -467,7 +467,7 @@ input[type="file"]::file-selector-button {
 .score-blocks p{
     margin-bottom: 10px;
     margin-top: 10px;
-        color: var(--color-text-secondary);
+    color: var(--color-text-secondary);
 }
 .confidence-bar{
     width: 100%;
@@ -476,6 +476,16 @@ input[type="file"]::file-selector-button {
     border-radius: 5px;
 }
 #confidence-status{
-    background: var(--color-primary);
+    background: var(--color-text-logo);
     border-radius: 5px;
+    animation: wave 0.5s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% {
+    background-color: var(--color-primary-glow);
+  }
+  50% {
+    background-color: var(--color-primary-light);
+  }
 }

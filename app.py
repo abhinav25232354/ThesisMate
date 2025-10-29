@@ -4,38 +4,142 @@ import markdown
 import os
 import re
 import html
+import re
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from html import unescape
+import math
+from difflib import SequenceMatcher
 
 app = Flask(__name__)
 
+
+def evaluate_response(question, answer):
+    """
+    Returns a stable, readable evaluation dictionary.
+    It ensures all scores (0–100) reflect realistic proportions.
+    """
+    if not question or not answer:
+        return {
+            k: 0
+            for k in [
+                "confidence",
+                "relevance",
+                "completeness",
+                "depth",
+                "citations",
+                "gap_accuracy",
+                "impact",
+            ]
+        }
+
+    # --- Clean text ---
+    q = re.sub(r"[^a-zA-Z0-9 ]", "", question.lower())
+    a = re.sub(r"[^a-zA-Z0-9 ]", "", answer.lower())
+
+    # --- Confidence ---
+    # If answer length is reasonable, confidence = 100
+    confidence = min(100, len(a) / 20)  # scaled to sentence length
+
+    # --- Relevance ---
+    relevance = SequenceMatcher(None, q, a).ratio() * 100
+    relevance = round(min(relevance + 30, 100), 2)  # boost for strong answers
+
+    # --- Completeness ---
+    # Based on length and keyword density
+    completeness = min(100, len(a.split()) / 30 * 100)
+    completeness = round(completeness, 2)
+
+    # --- Depth ---
+    depth_keywords = [
+        "architecture",
+        "training",
+        "model",
+        "data",
+        "parameters",
+        "applications",
+        "challenges",
+    ]
+    depth_hits = sum(k in a for k in depth_keywords)
+    depth = min(100, depth_hits / len(depth_keywords) * 100)
+
+    # --- Citations ---
+    # --- Citations Quality ---
+
+
+    # Detects multiple citation patterns: [1], (Author, 2020), "according to", etc.
+    citation_patterns = [
+        r"\[\d+\]",  # [1]
+        r"\(.*?et al\.,\s*\d{4}\)",  # (Smith et al., 2020)
+        r"\(.*?\d{4}\)",  # (Smith, 2021)
+        r"according to",  # "according to ..."
+        r"source",  # "source: ..."
+        r"reference",  # "reference"
+    ]   
+
+    citation_hits = sum(bool(re.search(p, answer.lower())) for p in citation_patterns)
+
+    if citation_hits == 0:
+        citations = 0
+    elif citation_hits == 1:
+        citations = 50
+    else:
+        citations = min(100, 60 + (citation_hits * 20))
+
+    # --- Gap Accuracy ---
+    gap_accuracy = round(
+        max(20, min(100, relevance * 0.5 + completeness * 0.3 + depth * 0.2)), 2
+    )
+
+    # --- Research Impact ---
+    impact = round((depth * 0.4 + completeness * 0.3 + confidence * 0.3), 2)
+    impact = min(100, impact)
+
+    return {
+        "confidence": round(confidence, 2),
+        "relevance": round(relevance, 2),
+        "completeness": round(completeness, 2),
+        "depth": round(depth, 2),
+        "citations": round(citations, 2),
+        "gap_accuracy": round(gap_accuracy, 2),
+        "impact": round(impact, 2),
+    }
+
+
 def strip_html_tags(s):
     # 1. Remove all HTML tags
-    s = re.sub(r'<[^>]*>', '', s)
+    s = re.sub(r"<[^>]*>", "", s)
     # 2. Decode HTML entities (e.g., &quot; → ")
     s = html.unescape(s)
     # 3. Remove citations like [1], [2][3][4], etc.
-    s = re.sub(r'\[\d+(?:\]\[\d+)*\]', '', s)
+    s = re.sub(r"\[\d+(?:\]\[\d+)*\]", "", s)
     # 4. Normalize whitespace
-    return re.sub(r'\s+', ' ', s).strip()
+    return re.sub(r"\s+", " ", s).strip()
+
 
 def citation_function(citations):
     links = [f'<li><a href="{url}" target="_blank">{url}</a></li>' for url in citations]
     return "<ul>" + "".join(links) + "</ul>"
 
+
 def search_results_function(search_results):
     results = []
     for res in search_results:
-        results.append({
-            "title": res.get("title"),
-            "url": res.get("url"),
-            "date": res.get("date"),
-            "last_updated": res.get("last_updated")
-        })
+        results.append(
+            {
+                "title": res.get("title"),
+                "url": res.get("url"),
+                "date": res.get("date"),
+                "last_updated": res.get("last_updated"),
+            }
+        )
     return results
+
 
 def checkExistingEntry(question):
     def normalize_question(q):
         # Lowercase, strip, remove trailing punctuation (., ?, !)
-        return re.sub(r'[.?!]+$', '', q.strip().lower())
+        return re.sub(r"[.?!]+$", "", q.strip().lower())
 
     if not question:
         return "No entry Matched"
@@ -60,22 +164,25 @@ def checkExistingEntry(question):
 
     return "No entry Matched"
 
-@app.route('/')
+
+@app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html", evaluation=None)
 
 
 chats = []
-@app.route('/ask', methods=['GET', 'POST'])
+
+
+@app.route("/ask", methods=["GET", "POST"])
 def ask():
-    if request.method == 'POST':
-        user_input = request.form.get('question', '').strip()
-        url_input = request.form.get('url', '').strip() 
-        uploaded_file = request.files.get('fileInput')
+    if request.method == "POST":
+        user_input = request.form.get("question", "").strip()
+        url_input = request.form.get("url", "").strip()
+        uploaded_file = request.files.get("fileInput")
 
         all_chats = []
         file_path = None
-        if uploaded_file and uploaded_file.filename != '':
+        if uploaded_file and uploaded_file.filename != "":
             os.makedirs("uploads", exist_ok=True)
             file_path = os.path.join("uploads", uploaded_file.filename)
             uploaded_file.save(file_path)
@@ -95,7 +202,7 @@ def ask():
                                 all_chats.append(chat_obj)
                         except Exception:
                             continue
-            return render_template('index.html', chats=all_chats)
+            return render_template("index.html", chats=all_chats, evaluation=None)
 
         # found_chat = checkExistingEntry(user_input)
         found_chat = checkExistingEntry(user_input or file_path or url_input)
@@ -103,19 +210,19 @@ def ask():
         if found_chat != "No entry Matched":
             # Only show the found chat, do not append or save duplicate
             with open("Evaluation.txt", "w") as eval_file:
-                format_chat = strip_html_tags(found_chat['answer'])
+                format_chat = strip_html_tags(found_chat["answer"])
                 eval_file.write(f"\nQ: {user_input}\nCached: {format_chat}\n\n")
 
-            return render_template('index.html', chats=[found_chat])
+                evaluation = evaluate_response(user_input, format_chat)
+                return render_template(
+                    "index.html", chats=[found_chat], evaluation=evaluation
+                )
+            return render_template("index.html", chats=[found_chat], evaluation=None)
 
         # Not found, do a new API request
         try:
             print(f"User Input: {user_input}, File: {file_path}, URL: {url_input}")
-            answer = askAI(
-                userInput=user_input,
-                file=file_path,
-                url=url_input
-            )
+            answer = askAI(userInput=user_input, file=file_path, url=url_input)
             print(f"API called")
 
             citations = citation_function(answer[0])
@@ -125,23 +232,26 @@ def ask():
                 "question": user_input,
                 "answer": content,
                 "citations": citations,
-                "search_results": search_results
+                "search_results": search_results,
             }
             all_chats.append(chat_entry)
             with open("chat_history.txt", "a", encoding="utf-8") as f:
                 f.write(str(chat_entry) + "\n")
-            
+
             with open("Evaluation.txt", "w") as eval_file:
-                eval_file.write(f"Q: {user_input}\nA: {content}\n\n")
-                
-            return render_template('index.html', chats=all_chats)
+                format_chat = strip_html_tags(found_chat["answer"])
+                eval_file.write(f"\nQ: {user_input}\nCached: {format_chat}\n\n")
+
+            evaluation = evaluate_response(user_input, format_chat)
+            return render_template("index.html", chats=all_chats, evaluation=evaluation)
 
         except Exception as e:
             return render_template(
-                'index.html',
+                "index.html",
                 answer=f"Error: {str(e)}",
                 question=user_input,
-                chats=all_chats
+                chats=all_chats,
+                evaluation=evaluation,
             )
 
     # GET request
@@ -158,14 +268,13 @@ def ask():
                             all_chats.append(chat_obj)
                     except Exception:
                         continue
-        return render_template('index.html', chats=all_chats)
+    return render_template("index.html", chats=all_chats, evaluation=None)
 
-    
 
-@app.route('/regenerate', methods=['POST', 'GET'])
+@app.route("/regenerate", methods=["POST", "GET"])
 def regenerate():
     try:
-        question = request.form.get('question', '').strip()
+        question = request.form.get("question", "").strip()
         file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
         with open(file_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -180,29 +289,31 @@ def regenerate():
             "question": question + " (Regenerated)",
             "answer": content,
             "citations": citations,
-            "search_results": search_results
+            "search_results": search_results,
         }
         chats.append(chat_entry)
         with open("chat_history.txt", "a", encoding="utf-8") as f:
             f.write(str(chat_entry) + "\n")
-        return render_template('index.html', chats=chats[-1:])
-    
+        return render_template("index.html", chats=chats[-1:])
+
     except Exception as e:
-        return render_template('index.html', answer=f"Error: {str(e)}")
+        return render_template("index.html", answer=f"Error: {str(e)}")
 
-@app.route('/about', methods=['GET'])
+
+@app.route("/about", methods=["GET"])
 def about():
-    return render_template('about.html')
+    return render_template("about.html")
 
-@app.route('/history', methods=['GET'])
+
+@app.route("/history", methods=["GET"])
 def history():
-    return render_template('index.html', chats=chats)
+    return render_template("index.html", chats=chats)
 
 
 @app.route("/analyzeGap", methods=["GET", "POST"])
 def analyzeGap():
     try:
-        question = request.form.get('question', '').strip()
+        question = request.form.get("question", "").strip()
         file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
         with open(file_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -228,7 +339,7 @@ def analyzeGap():
 
             Be concise, analytical, and academic in tone. Focus only on gap discovery and future scope, not on summarizing the full paper.
             """
-        
+
         answer = askAI(prompt)
         citations = citation_function(answer[0])
         content = answer[1]
@@ -237,16 +348,16 @@ def analyzeGap():
             "question": question + " (Gap Analysis)",
             "answer": content,
             "citations": citations,
-            "search_results": search_results
+            "search_results": search_results,
         }
         chats.append(chat_entry)
         with open("chat_history.txt", "a", encoding="utf-8") as f:
             f.write(str(chat_entry) + "\n")
-        return render_template('index.html', chats=chats[-1:])
-    
+        return render_template("index.html", chats=chats[-1:])
+
     except Exception as e:
-        return render_template('index.html', answer=f"Error: {str(e)}")
+        return render_template("index.html", answer=f"Error: {str(e)}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
