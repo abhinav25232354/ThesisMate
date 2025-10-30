@@ -116,9 +116,27 @@ function alert(){
 }
 
 function score_board_toggle() {
-    if (score_board.style.display != 'block') {
+    // If currently hidden, show then animate in by adding modifier class.
+    const isVisible = score_board.classList.contains('score-card--visible');
+    if (!isVisible) {
+        // Set display first so transitions can run
         score_board.style.display = 'block';
+        // Force a reflow so the browser picks up the starting state
+        // then add the visible class on the next frame to trigger transition
+        requestAnimationFrame(() => {
+            score_board.classList.add('score-card--visible');
+        });
     } else {
-        score_board.style.display = 'none';
+        // Remove visible class to trigger exit transition
+        score_board.classList.remove('score-card--visible');
+        // After transition ends, set display none to remove from flow
+        const onTransitionEnd = (e) => {
+            // Only react to opacity/transform transitions from the card itself
+            if (e.target === score_board) {
+                score_board.style.display = 'none';
+                score_board.removeEventListener('transitionend', onTransitionEnd);
+            }
+        };
+        score_board.addEventListener('transitionend', onTransitionEnd);
     }
 }

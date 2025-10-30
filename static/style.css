@@ -443,7 +443,13 @@ input[type="file"]::file-selector-button {
     position: absolute;
     right: 10px;
     top: 50px;
+    /* keep element out of flow by default; JS will set display when needed */
     display: none;
+    /* make the element visually animatable when shown */
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 250ms ease, transform 250ms cubic-bezier(.2,.9,.2,1);
+    pointer-events: none; /* ignore pointer events when hidden */
 }
 
 /*Confidence score card*/
@@ -453,6 +459,13 @@ input[type="file"]::file-selector-button {
     padding: 20px;
     border-radius: 20px;
     color: var(--color-text-main);
+}
+
+/* Modifier: visible state */
+.score-card--visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
 }
 .score-blocks {
     border-radius: 20px;
