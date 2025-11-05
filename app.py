@@ -4,12 +4,21 @@ import markdown
 import os
 import re
 import html
-import re
+from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from html import unescape
 import math
 from difflib import SequenceMatcher
+
+# Path Configuration
+ROOT_DIR = Path(__file__).resolve().parent
+UPLOAD_DIR = ROOT_DIR / 'uploads'
+CHAT_HISTORY_FILE = ROOT_DIR / 'chat_history.txt'
+EVALUATION_FILE = ROOT_DIR / 'Evaluation.txt'
+
+# Ensure required directories exist
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 app = Flask(__name__)
 
@@ -145,9 +154,9 @@ def checkExistingEntry(question):
         return "No entry Matched"
 
     try:
-        if os.path.exists("chat_history.txt"):
+        if CHAT_HISTORY_FILE.exists():
             question_norm = normalize_question(question)
-            with open("chat_history.txt", "r", encoding="utf-8") as f:
+            with open(CHAT_HISTORY_FILE, "r", encoding="utf-8") as f:
                 for line in f:
                     if not line.strip():
                         continue
@@ -185,16 +194,15 @@ def ask():
         file_path = None
         evaluation = None
         if uploaded_file and uploaded_file.filename != "":
-            os.makedirs("uploads", exist_ok=True)
-            file_path = os.path.join("uploads", uploaded_file.filename)
-            uploaded_file.save(file_path)
+            file_path = UPLOAD_DIR / uploaded_file.filename
+            uploaded_file.save(str(file_path))
             print(f"Uploaded File: {file_path}")
 
         # if nothing is provided, just reload the page
         if not user_input and not file_path and not url_input:
             all_chats = []
-            if os.path.exists("chat_history.txt"):
-                with open("chat_history.txt", "r", encoding="utf-8") as f:
+            if CHAT_HISTORY_FILE.exists():
+                with open(CHAT_HISTORY_FILE, "r", encoding="utf-8") as f:
                     for line in f:
                         if not line.strip():
                             continue
@@ -212,7 +220,7 @@ def ask():
 
         if found_chat != "No entry Matched":
             # Only show the found chat, do not append or save duplicate
-            with open("Evaluation.txt", "w") as eval_file:
+            with open(EVALUATION_FILE, "w") as eval_file:
                 format_chat = strip_html_tags(found_chat["answer"])
                 eval_file.write(f"\nQ: {user_input}\nCached: {format_chat}\n\n")
 
@@ -238,7 +246,7 @@ def ask():
                 "search_results": search_results,
             }
             all_chats.append(chat_entry)
-            with open("chat_history.txt", "a", encoding="utf-8") as f:
+            with open(CHAT_HISTORY_FILE, "a", encoding="utf-8") as f:
                 f.write(str(chat_entry) + "\n")
 
             # Write evaluation using the generated content (not found_chat which would be a string here)
@@ -282,8 +290,7 @@ def ask():
 def regenerate():
     try:
         question = request.form.get("question", "").strip()
-        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
-        with open(file_path, "r", encoding="utf-8") as file:
+        with open(CHAT_HISTORY_FILE, "r", encoding="utf-8") as file:
             lines = file.readlines()
             context = lines[-1]
 
@@ -321,8 +328,7 @@ def history():
 def analyzeGap():
     try:
         question = request.form.get("question", "").strip()
-        file_path = "C:/Workspace/ThesisMate/ThesisMate/chat_history.txt"
-        with open(file_path, "r", encoding="utf-8") as file:
+        with open(CHAT_HISTORY_FILE, "r", encoding="utf-8") as file:
             lines = file.readlines()
             context = lines[-1]
 
