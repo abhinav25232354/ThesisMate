@@ -153,14 +153,15 @@ def checkExistingEntry(question):
                         continue
                     try:
                         chat_obj = eval(line.strip())
-                    except Exception:
+                    except Exception as e:
+                        print(f"checkExistingEntry: failed to eval line: {e}")
                         continue
                     if isinstance(chat_obj, dict):
                         q = chat_obj.get("question", "")
                         if normalize_question(q) == question_norm:
                             return chat_obj
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"checkExistingEntry error: {e}")
 
     return "No entry Matched"
 
@@ -182,6 +183,7 @@ def ask():
 
         all_chats = []
         file_path = None
+        evaluation = None
         if uploaded_file and uploaded_file.filename != "":
             os.makedirs("uploads", exist_ok=True)
             file_path = os.path.join("uploads", uploaded_file.filename)
@@ -200,7 +202,8 @@ def ask():
                             chat_obj = eval(line.strip())
                             if isinstance(chat_obj, dict):
                                 all_chats.append(chat_obj)
-                        except Exception:
+                        except Exception as e:
+                            print(f"ask POST: failed to eval chat_history line: {e}")
                             continue
             return render_template("index.html", chats=all_chats, evaluation=None)
 
@@ -238,14 +241,17 @@ def ask():
             with open("chat_history.txt", "a", encoding="utf-8") as f:
                 f.write(str(chat_entry) + "\n")
 
+            # Write evaluation using the generated content (not found_chat which would be a string here)
             with open("Evaluation.txt", "w") as eval_file:
-                format_chat = strip_html_tags(found_chat["answer"])
+                format_chat = strip_html_tags(content)
                 eval_file.write(f"\nQ: {user_input}\nCached: {format_chat}\n\n")
 
             evaluation = evaluate_response(user_input, format_chat)
             return render_template("index.html", chats=all_chats, evaluation=evaluation)
 
         except Exception as e:
+            print(f"ask POST error: {e}")
+            # Ensure variables passed to template are defined
             return render_template(
                 "index.html",
                 answer=f"Error: {str(e)}",
@@ -266,7 +272,8 @@ def ask():
                         chat_obj = eval(line.strip())
                         if isinstance(chat_obj, dict):
                             all_chats.append(chat_obj)
-                    except Exception:
+                    except Exception as e:
+                        print(f"ask GET: failed to eval chat_history line: {e}")
                         continue
     return render_template("index.html", chats=all_chats, evaluation=None)
 
