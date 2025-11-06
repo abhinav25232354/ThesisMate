@@ -425,7 +425,7 @@ input[type="file"]::file-selector-button {
 
 #score-dashboard-button{
     padding: 8px;
-    background: var(--color-bg-accent);
+    background: rgba(0, 0, 0, 0.418);
     color: var(--color-text-logo);
     border: 0px;
     position: absolute;
@@ -434,6 +434,11 @@ input[type="file"]::file-selector-button {
     border-radius: 12px;
     cursor: pointer;
     z-index: 9;
+}
+#score-dashboard-button span{
+    font-size: 30px;
+    color: var(--color-primary-glow);
+    transition: 0.5s;
 }
 #score-dashboard-card{
     /* background: var(--color-primary-light); */
