@@ -489,9 +489,9 @@ input[type="file"]::file-selector-button {
     border-radius: 5px;
 }
 #confidence-status{
-    background: var(--color-text-logo);
+    background: var(--color-primary-glow);
     border-radius: 5px;
-    animation: wave 0.5s ease-in-out infinite;
+    /* animation: wave 0.5s ease-in-out infinite; */
 }
 
 @keyframes wave {
