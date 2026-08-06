@@ -1,235 +1,216 @@
-from openai import OpenAI
-import requests
-import requests
-import os
-from bs4 import BeautifulSoup
 import html
+import json
+import os
 import re
+from pathlib import Path
+
+import requests
+from bs4 import BeautifulSoup
 from PyPDF2 import PdfReader
+
+try:
+    from docx import Document
+except ImportError:
+    Document = None
 
 
 def polished_markdown_to_html(text):
-    """
-    Convert Markdown-like text to polished, article-ready HTML.
-    """
     if not text or not text.strip():
         return ""
 
-    # Normalize line endings
     text = text.replace("\r\n", "\n").replace("\r", "\n")
-
-    # Escape HTML first
     text = html.escape(text)
-    # text = html_lines.append(f"<p>{html.escape(' '.join(paragraph_lines))}</p>")
-
-    # Inline formatting
-    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)  # code
-    text = re.sub(r"\*\*([^\*]+)\*\*", r"<strong>\1</strong>", text)  # bold
-    text = re.sub(r"\*([^\*]+)\*", r"<em>\1</em>", text)  # italic
-    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)  # links
-    text = re.sub(r"(\[\d+(?:\]\[\d+)*\])", r"<sup>\1</sup>", text)  # citations
+    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
+    text = re.sub(r"\*\*([^\*]+)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\*([^\*]+)\*", r"<em>\1</em>", text)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
+    text = re.sub(r"(\[\d+(?:\]\[\d+)*\])", r"<sup>\1</sup>", text)
 
     lines = text.split("\n")
     html_lines = []
-    i = 0
-    while i < len(lines):
-        line = lines[i].strip()
+    index = 0
+    while index < len(lines):
+        line = lines[index].strip()
         if not line:
-            i += 1
+            index += 1
             continue
 
-        # Headers (#, ##, ...)
         header_match = re.match(r"^(#{1,6})\s+(.*)", line)
         if header_match:
             level = len(header_match.group(1))
             content = header_match.group(2)
-            size_style = {
-                1: "2em",
-                2: "1.75em",
-                3: "1.5em",
-                4: "1.25em",
-                5: "1.1em",
-                6: "1em",
-            }
+            sizes = {1: "2em", 2: "1.75em", 3: "1.5em", 4: "1.25em", 5: "1.1em", 6: "1em"}
             html_lines.append(
-                f"<h{level} style='font-size:{size_style[level]}; margin-bottom:1em;'>{content}</h{level}>"
+                f"<h{level} style='font-size:{sizes[level]}; margin-bottom:1em;'>{content}</h{level}>"
             )
-            i += 1
+            index += 1
             continue
 
-        # Blockquotes
         if line.startswith(">"):
             quote_lines = []
-            while i < len(lines) and lines[i].strip().startswith(">"):
-                quote_lines.append(lines[i].strip()[1:].strip())
-                i += 1
+            while index < len(lines) and lines[index].strip().startswith(">"):
+                quote_lines.append(lines[index].strip()[1:].strip())
+                index += 1
             html_lines.append(
-                f"<blockquote style='margin:1em 0; padding-left:1em; border-left:3px solid #ccc; font-style:italic;'>{' '.join(quote_lines)}</blockquote>"
+                "<blockquote style='margin:1em 0; padding-left:1em; border-left:3px solid #ccc; "
+                f"font-style:italic;'>{' '.join(quote_lines)}</blockquote>"
             )
             continue
 
-        # Unordered lists
         if re.match(r"^[-*]\s+", line):
-            list_items = []
-            while i < len(lines) and re.match(r"^[-*]\s+", lines[i].strip()):
-                item = re.sub(r"^[-*]\s+", "", lines[i].strip())
-                list_items.append(f"<li style='margin-bottom:0.5em;'>{item}</li>")
-                i += 1
-            html_lines.append(
-                f"<ul style='margin-bottom:1em;'>{''.join(list_items)}</ul>"
-            )
+            items = []
+            while index < len(lines) and re.match(r"^[-*]\s+", lines[index].strip()):
+                item = re.sub(r"^[-*]\s+", "", lines[index].strip())
+                items.append(f"<li style='margin-bottom:0.5em;'>{item}</li>")
+                index += 1
+            html_lines.append(f"<ul style='margin-bottom:1em;'>{''.join(items)}</ul>")
             continue
 
-        # Ordered lists
         if re.match(r"^\d+\.\s+", line):
-            list_items = []
-            while i < len(lines) and re.match(r"^\d+\.\s+", lines[i].strip()):
-                item = re.sub(r"^\d+\.\s+", "", lines[i].strip())
-                list_items.append(f"<li style='margin-bottom:0.5em;'>{item}</li>")
-                i += 1
-            html_lines.append(
-                f"<ol style='margin-bottom:1em;'>{''.join(list_items)}</ol>"
-            )
+            items = []
+            while index < len(lines) and re.match(r"^\d+\.\s+", lines[index].strip()):
+                item = re.sub(r"^\d+\.\s+", "", lines[index].strip())
+                items.append(f"<li style='margin-bottom:0.5em;'>{item}</li>")
+                index += 1
+            html_lines.append(f"<ol style='margin-bottom:1em;'>{''.join(items)}</ol>")
             continue
 
-        # Normal paragraph
-        paragraph_lines = []
-        while i < len(lines) and lines[i].strip() != "":
-            paragraph_lines.append(lines[i].strip())
-            i += 1
+        paragraph = []
+        while index < len(lines) and lines[index].strip():
+            paragraph.append(lines[index].strip())
+            index += 1
         html_lines.append(
-            f"<p style='margin-bottom:1.5em; line-height:1.6;'>{' '.join(paragraph_lines)}</p>"
+            f"<p style='margin-bottom:1.5em; line-height:1.6;'>{' '.join(paragraph)}</p>"
         )
 
     return "\n".join(html_lines)
 
 
-def askAI(userInput=None, file=None, url=None):
-    API_KEY = "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"
-    API_URL = "https://api.perplexity.ai/chat/completions"
-    HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
-    MODEL_NAME = "sonar"
+def extract_text_from_file(file_path):
+    suffix = file_path.suffix.lower()
+    if suffix == ".txt":
+        return file_path.read_text(encoding="utf-8")
+    if suffix == ".pdf":
+        reader = PdfReader(str(file_path))
+        return "\n".join(page.extract_text() or "" for page in reader.pages)
+    if suffix in {".docx", ".doc"}:
+        if Document is None:
+            raise RuntimeError("python-docx is required to process Word documents.")
+        document = Document(str(file_path))
+        return "\n".join(paragraph.text for paragraph in document.paragraphs)
+    raise RuntimeError(f"Unsupported file format: {suffix}")
+
+
+def extract_text_from_url(url):
+    response = requests.get(url, timeout=15)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.content, "html.parser")
+    for script in soup(["script", "style"]):
+        script.extract()
+    return "\n".join(
+        line.strip()
+        for line in soup.get_text(separator="\n").splitlines()
+        if line.strip()
+    )
+
+
+def read_history_context(history_path):
+    if not history_path:
+        return ""
+
+    history_path = Path(history_path)
+    if not history_path.exists():
+        return ""
+
+    context_items = []
+    with history_path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                item = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            context_items.append(item)
+    return json.dumps(context_items[-3:], ensure_ascii=False)
+
+
+def ask_ai(user_input=None, file_path=None, url=None, history_path=None):
+    api_key = os.getenv("PERPLEXITY_API_KEY")
+    api_url = os.getenv("PERPLEXITY_API_URL", "https://api.perplexity.ai/chat/completions")
+    model_name = os.getenv("THESISMATE_MODEL", "sonar")
+
+    if file_path:
+        user_input = extract_text_from_file(Path(file_path))
+    elif url:
+        user_input = extract_text_from_url(url)
+
+    if not user_input:
+        return [], "<p>No input provided.</p>", []
+
+    if not api_key:
+        raise RuntimeError(
+            "Missing PERPLEXITY_API_KEY. Add it to your environment before starting the app."
+        )
+
+    context = read_history_context(history_path)
+    prompt = f"""
+You are ThesisMate, an academic research assistant.
+Answer the user's request with clear headings and practical academic structure.
+When appropriate, cover:
+1. Topic overview
+2. Key concepts or theories
+3. Methodology or evidence
+4. Limitations or challenges
+5. Research gaps
+6. Future directions
+7. Practical applications
+8. Concise summary
+
+Question:
+{user_input}
+
+Recent context:
+{context[:3000]}
+""".strip()
+
+    payload = {
+        "model": model_name,
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are a helpful academic assistant. "
+                    "Use a professional tone, answer clearly, and cite sources when the model provides them."
+                ),
+            },
+            {"role": "user", "content": prompt},
+        ],
+        "temperature": float(os.getenv("THESISMATE_TEMPERATURE", "0.7")),
+        "max_tokens": int(os.getenv("THESISMATE_MAX_TOKENS", "3000")),
+        "top_p": 1.0,
+        "search_mode": os.getenv("THESISMATE_SEARCH_MODE", "academic"),
+    }
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
 
     try:
-        # Handle file input
-        if file:
-            ext = os.path.splitext(file)[1].lower()
-            if ext == ".txt":
-                with open(file, "r", encoding="utf-8") as f:
-                    userInput = f.read()
-            elif ext == ".pdf":
-                reader = PdfReader(file)
-                userInput = "\n".join(
-                    [page.extract_text() or "" for page in reader.pages]
-                )
-            elif ext in [".docx", ".doc"]:
-                doc = docx.Document(file)
-                userInput = "\n".join([p.text for p in doc.paragraphs])
-            else:
-                return [], f"<p>Unsupported file format: {ext}</p>", []
+        response = requests.post(api_url, headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        raise RuntimeError("The upstream AI request failed. Check your API key and network access.") from exc
 
-        # Handle URL input
-        if url:
-            page = requests.get(url, timeout=15)
-            soup = BeautifulSoup(page.content, "html.parser")
-            for script in soup(["script", "style"]):
-                script.extract()
-            userInput = "\n".join(
-                [
-                    line.strip()
-                    for line in soup.get_text(separator="\n").splitlines()
-                    if line.strip()
-                ]
-            )
-
-        if not userInput:
-            return [], "<p>No input provided.</p>", []
-
-        # Load chat history safely
-        context = ""
-        if os.path.exists("chat_history.txt"):
-            try:
-                with open("chat_history.txt", "r", encoding="utf-8") as f:
-                    context = f.read()
-            except Exception as e:
-                print("Error reading chat_history.txt:", e)
-
-        print(f"DEBUG: Sending to API -> userInput length: {len(userInput)}")
-
-        optimal_prompt = f"""
-            You are an AI Research Assistant. 
-            Answer the following question comprehensively using these perspectives:
-            1. Types of Research/Topic (qualitative, quantitative, mixed methods, hybrid, etc.)
-            2. Philosophy
-            3. History
-            4. Theory
-            5. Methodology
-            6. Challenges
-            7. Research Gaps
-            8. Future Scope
-            9. Applications
-            10. Ethics
-            11. Meta-Reflection
-            12. Summary
-            Question: {userInput}
-            Context: {context[:2000]}
-            Write in academic tone with clear section headings, keeping it concise yet insightful.
-            """
-
-        payload = {
-            "model": MODEL_NAME,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": (
-                        "You are ThesisMate and you are made by Abhinav a BCA student."
-                        "You are an intelligent assistant. "
-                        "If the user asks casual greetings or small talk, reply naturally and concisely. "
-                        "If the user asks a knowledge or research-related question, provide detailed and insightful answers. "
-                        "If a file is attached with the question, use its content to inform your response."
-                        "If the attached file is a research paper, thesis, or article, summarize its key points and findings in your answer."
-                        "If the user input contains multiple questions, answer each one thoroughly."
-                        "If the attached file is research then classify the research type (e.g., empirical study, literature review, theoretical paper) and summarize its main contributions accordingly. "
-                        "Support your response with **10–20 citations**, ensuring diversity of sources "
-                        "(academic papers, books, reputable articles). "
-                        "Do not summarize too briefly—expand fully."
-                        f"{context[:2000]}"
-                        f"{optimal_prompt}"
-                    ),
-                },
-                {"role": "user", "content": userInput},
-            ],
-            "temperature": 0.7,
-            "max_tokens": 3000,  # OpenAI-compatible parameter (maps from your max_output_tokens)
-            "top_p": 1.0,  # Optional: nucleus sampling (default if not specified)
-            "search_mode": "academic",  # or "academic" for scholarly mode :contentReference[oaicite:0]{index=0}
-        }
-
-        try:
-            response = requests.post(API_URL, headers=HEADERS, json=payload, timeout=60)
-            response.raise_for_status()
-            data = response.json()
-        except Exception as e:
-            print("API request failed:", e)
-            # return [], f"<p>API request error: {e}</p>", []
-            return [], "<p>Sorry, The Context is too big to process (Try with shorter)</p>", []
-
-        answer_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
-        content = polished_markdown_to_html(answer_text)
-        citations = data.get("citations", [])
-        search_results = data.get("search_results", [])
-
-        print("DEBUG: API call successful")
-        return citations, content, search_results
-
-    except Exception as e:
-        print("askAI internal error:", e)
-        # return [], f"<p>Internal error: {e}</p>", []
-        return [], f"<p>Will be right back (internal error occurred)</p>", []
+    data = response.json()
+    answer_text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    content = polished_markdown_to_html(answer_text)
+    citations = data.get("citations", [])
+    search_results = data.get("search_results", [])
+    return citations, content, search_results
 
 
 if __name__ == "__main__":
-    question = input("Enter your question: ")
-    # file = "C:/Users/Infort/Downloads/Synopsis of Project.pdf"
-    # print(askAI(question, file))
-    print(askAI(question))
+    prompt = input("Enter your question: ")
+    print(ask_ai(user_input=prompt))

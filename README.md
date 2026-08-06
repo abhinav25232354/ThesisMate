@@ -1,153 +1,99 @@
 # ThesisMate
 
-ThesisMate is a Flask-based web application designed to help students, professionals, and researchers explore, analyze, and summarize academic content more effectively. It integrates with AI models to process queries, research papers, and URLs, providing structured answers, citations, and research gap detection.  
+ThesisMate is a Flask web app for exploring research questions, summarizing papers, analyzing article URLs, and generating structured AI-assisted responses with citations.
 
-The project is developed and maintained under the **DexterityCoder** brand.
-
----
+This repository is prepared for self-hosting and public reuse. It does not include personal credentials, user uploads, or private chat history.
 
 ## Features
 
-- **Question Answering**  
-  Enter a research question or query and receive a detailed AI-generated response with citations.
-
-- **PDF Upload & Analysis**  
-  Upload a research paper in PDF format to extract text, metadata, summaries, and insights.
-
-- **Research Gap Detection**  
-  Identify unexplored areas within a research topic to assist in generating original ideas.
-
-- **URL-Based Research**  
-  Provide a valid URL to analyze and summarize its content.
-
-- **Citations and Sources**  
-  Automatically formats citations and lists related sources with details such as title, publication date, and URL.
-
-- **Chat History**  
-  Stores past queries and responses for quick retrieval and reference.
-
-- **Regeneration of Responses**  
-  Re-run AI analysis on any previous question to generate a fresh, alternative answer.
-
-- **Export Options**  
-  Generate branded summaries and export them for offline use.
-
-- **Smart Caching**  
-  Stores previously processed queries for faster performance.
-
----
+- Ask research questions and receive structured responses
+- Upload `.pdf`, `.txt`, and `.docx` files for analysis
+- Analyze article URLs by pasting a link into the prompt field
+- Review suggested citations and related sources
+- Regenerate answers and run research gap analysis
+- Cache prior responses locally in app-owned runtime storage
 
 ## Project Structure
 
-```
+```text
 .
-├── app.py               # Main Flask application
-├── Api_Request.py       # Handles API requests and content formatting
-├── requirements.txt     # Python dependencies
-├── templates/
-│   ├── index.html       # Main UI
-│   ├── about.html       # About page
-├── static/
-│   ├── style.css        # Stylesheet
-│   ├── script.js        # Frontend logic
-│   ├── logo.png         # Branding logo
-│   └── Mobile.css       # Responsive styling for smaller screens
-├── uploads/             # Uploaded PDFs and files
-└── chat_history.txt     # Stores past queries and answers
+|-- app.py
+|-- Api_Request.py
+|-- requirements.txt
+|-- templates/
+|   |-- index.html
+|   `-- about.html
+|-- static/
+|   |-- style.css
+|   |-- Mobile.css
+|   |-- script.js
+|   `-- assets...
+|-- data/                # created at runtime, ignored by git
+|   |-- uploads/
+|   |-- chat_history.jsonl
+|   `-- evaluation.txt
+|-- .env.example
+|-- .gitignore
+|-- LICENSE
+`-- RELEASE_NOTES.md
 ```
 
----
+## Requirements
 
-## Installation
+- Python 3.10+
+- A Perplexity API key
 
-### Prerequisites
-- Python 3.8 or later  
-- A Perplexity AI API key (or other supported model API key)
+## Quick Start
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/abhinav25232354/ThesisMate
-   cd ThesisMate
-   ```
+1. Clone the repository.
+2. Create a virtual environment.
+3. Install dependencies:
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate     # On Linux/Mac
-   venv\Scripts\activate        # On Windows
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-3. Install the dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+4. Copy `.env.example` to `.env` or export the variables in your shell.
+5. Set `PERPLEXITY_API_KEY`.
+6. Run the app:
 
-4. Add your API key inside **`Api_Request.py`**:
-   ```python
-   API_KEY = "your-api-key-here"
-   ```
+```bash
+python app.py
+```
 
-5. Run the Flask application:
-   ```bash
-   python app.py
-   ```
+7. Open `http://127.0.0.1:5000`.
 
-6. Open your browser at:
-   ```
-   http://127.0.0.1:5000
-   ```
+## Configuration
 
----
+Environment variables:
 
-## Usage
+- `PERPLEXITY_API_KEY`: required API key
+- `PERPLEXITY_API_URL`: optional override for the API endpoint
+- `THESISMATE_MODEL`: model name, default `sonar`
+- `THESISMATE_SEARCH_MODE`: search mode, default `academic`
+- `THESISMATE_TEMPERATURE`: generation temperature, default `0.7`
+- `THESISMATE_MAX_TOKENS`: max response tokens, default `3000`
+- `THESISMATE_MAX_UPLOAD_BYTES`: upload size limit in bytes, default `16777216`
+- `FLASK_HOST`: server host, default `127.0.0.1`
+- `FLASK_PORT`: server port, default `5000`
+- `FLASK_DEBUG`: enable debug mode with `true` or `1`
 
-1. **Ask a Question**  
-   Type a question in the input box and press the submit button. The AI will generate a detailed response with citations.
+## Privacy and Local Data
 
-2. **Upload a PDF**  
-   Use the PDF upload button to analyze and summarize academic papers.
+ThesisMate stores runtime data in the local `data/` directory:
 
-3. **Research Gaps**  
-   Choose the “Analyze Gaps” option to let the system highlight areas lacking sufficient research.
+- uploaded files
+- cached chat history
+- latest evaluation output
 
-4. **History and Regeneration**  
-   - View past conversations via the **History** button.  
-   - Regenerate answers for past queries using the **Regenerate** button.  
+Those files are ignored by git so they do not get committed by default.
 
-5. **Export Summaries**  
-   Export AI responses and research summaries in a formatted PDF.
+## Development Notes
 
----
-
-## Technology Stack
-
-- **Backend**: Python, Flask  
-- **Frontend**: HTML, CSS, JavaScript (with HTMX for dynamic updates)  
-- **AI Models**: Perplexity API (Sonar model by default)  
-- **Utilities**: PyPDF2 for PDF parsing, BeautifulSoup for web scraping, ReportLab for PDF exports  
-
----
-
-## Contributing
-
-Contributions are welcome. If you wish to improve functionality, fix bugs, or enhance the interface:
-
-1. Fork the repository  
-2. Create a new branch (`git checkout -b feature/new-feature`)  
-3. Commit changes (`git commit -m "Added new feature"`)  
-4. Push to your branch (`git push origin feature/new-feature`)  
-5. Open a Pull Request  
-
----
+- The app expects outbound network access to reach the configured AI provider.
+- The current UI is optimized for desktop layouts.
+- If you want production deployment, use a WSGI server such as `gunicorn`.
 
 ## License
 
-This project is licensed under the MIT License. You are free to use, modify, and distribute it with attribution.
-
----
-
-## Contact
-
-For questions, suggestions, or support, reach out at:  
-**Email**: [support@dexteritycoder.com](mailto:support@dexteritycoder.com)  
+This project is released under the MIT License. See [LICENSE](LICENSE).

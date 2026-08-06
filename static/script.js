@@ -5,10 +5,12 @@ score_button = document.getElementById('score-dashboard-button');
 score_board = document.getElementById('score-dashboard-card');
 
 
-button.addEventListener('click', function () {
-    right_before.style.display = 'none';
-    right_after.style.display = 'block';
-});
+if (button && right_before && right_after) {
+    button.addEventListener('click', function () {
+        right_before.style.display = 'none';
+        right_after.style.display = 'block';
+    });
+}
 
 // To Handle PDF Upload Toggle
 // document.addEventListener("DOMContentLoaded", () => {

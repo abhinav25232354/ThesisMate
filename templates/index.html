@@ -32,7 +32,7 @@
     <script>hljs.highlightAll();</script>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 
-    <title>ThesisMate - By Abhinav</title>
+    <title>ThesisMate</title>
 </head>
 <body>
 
@@ -157,13 +157,13 @@ analytics
             <div class="question-asking-whole-form">
                 <form class="question-asking-form" action="/ask" method="post" enctype="multipart/form-data">
                     <div class="service-toggles">
-                        <button class="service-toggle-pdfUpload" id="pdf-upload" onclick="TakePDF()">
+                        <button class="service-toggle-pdfUpload" id="pdf-upload" type="button">
                             <input style="color: rgb(49 184 198);" type="file" id="PDFInput"
                                 name="fileInput">&nbsp;&nbsp;&nbsp;</button>
                     </div>
                     <input class="question-asking-prompt" type="text" name="question"
                         placeholder="Type your question here..." required>
-                    <button class="question-asking-prompt-button" type="submit" href="{{url_for('ask')}}"><span class="material-symbols-outlined">
+                    <button id="question-asking-prompt-button" class="question-asking-prompt-button" type="submit" href="{{url_for('ask')}}"><span class="material-symbols-outlined">
 send
 </span></button>
                 </form>
@@ -216,8 +216,8 @@ send
                 <div class="right-content">
                     <div id="welcome">
                         <h1>ThesisMate</h1>
-                        <p>Made By <a onclick="toggleAbout()"
-                                style="color: rgb(49 184 198); cursor: pointer;">Abhinav</a>
+                        <p>AI support for reading, summarizing, and exploring research. <a onclick="toggleAbout()"
+                                style="color: rgb(49 184 198); cursor: pointer;">Learn more</a>
                         </p>
                     </div>
                     <div class="services">
@@ -244,17 +244,11 @@ send
 
 
         <div class="about">
-            <h2>About AI Researcher</h2>
+            <h2>About ThesisMate</h2>
             <p>
-                AI Researcher is a comprehensive artificial intelligence tool developed to assist students,
-                professionals,
-                and researchers
-                in exploring, analyzing, and summarizing academic content efficiently. It combines advanced language
-                models
-                with
-                intelligent algorithms to process user queries, extract relevant information from research papers, and
-                provide
-                actionable insights in a structured and easy-to-understand format.
+                ThesisMate is an AI-assisted research workspace for students, educators, and independent researchers.
+                It helps turn research questions, papers, and web pages into organized summaries, source lists, and
+                starting points for further investigation.
             </p>
             <br>
             <h3>Key Features:</h3>
@@ -276,9 +270,8 @@ send
                 <li><strong>Customizable Workflows:</strong> Adjusts outputs and recommendations based on specific
                     research
                     needs or topic preferences.</li>
-                <li><strong>PDF Export:</strong> Generates branded summaries and reports that can be downloaded for
-                    offline
-                    use or academic submission.</li>
+                <li><strong>PDF Export:</strong> Generates summaries and reports that can be reviewed, edited, or shared
+                    outside the app.</li>
                 <li><strong>Smart Caching:</strong> Saves previously searched topics for faster retrieval and efficient
                     use
                     of resources.</li>
@@ -286,8 +279,7 @@ send
             <br>
             <h3>How It Works:</h3>
             <p>
-                Users can enter research questions, topics, or upload academic papers, and AI Researcher will process
-                the
+                Users can enter research questions, topics, or upload academic papers, and ThesisMate will process the
                 input to
                 provide a detailed analysis. The tool leverages a combination of natural language processing, machine
                 learning models,
@@ -300,24 +292,19 @@ send
                 <li>Formatted references with complete source details</li>
             </ul>
             <p>
-                By automating these tasks, AI Researcher helps users focus on decision-making and hypothesis generation
+                By automating these tasks, ThesisMate helps users focus on decision-making and hypothesis generation
                 rather than
                 spending hours manually reading and analyzing papers.
             </p>
             <br>
-            <h3>Contact Us:</h3>
+            <h3>Configuration:</h3>
             <p>
-                For questions, suggestions, or support, you can reach us at: <a href="mailto:support@dexteritycoder.com"
-                    style="color: #116dff;">support@dexteritycoder.com</a>.
+                ThesisMate is designed for self-hosting. Add your own API credentials through environment variables and
+                customize the model, upload limits, and deployment settings for your use case.
             </p>
         </div>
     </div>
 </body>
 <script src="/static/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script>
-    const answerDiv = document.getElementById("answerDiv");
-    answerDiv.innerHTML = marked.parse(answerDiv);
-</script>
-
 </html>
